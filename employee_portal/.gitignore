@@ -1,0 +1,30 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+env/
+venv/
+pip-selfcheck.json
+.tox/
+.eggs/
+*.egg-info/
+*.egg
+dist/
+build/
+*.so
+*.log
+*.log.*
+
+# Database
+instance/
+*.sqlite3
+*.db
+migrations/
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo

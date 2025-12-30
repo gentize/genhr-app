@@ -1,0 +1,254 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <div class="row">
+        <!-- Sidebar Card -->
+        <div class="col-lg-4 mb-4">
+            <div class="card shadow-sm text-center h-100">
+                <div class="card-body">
+                    <div class="mb-3">
+                        <img src="{{ image_file }}" alt="avatar" class="rounded-circle img-thumbnail shadow-sm" style="width: 150px; height: 150px; object-fit: cover;">
+                    </div>
+                    <h4 class="mb-1">{{ employee.first_name }} {{ employee.last_name }}</h4>
+                    <p class="text-primary mb-2 fw-medium">{{ employee.designation.title if employee.designation else 'No Designation' }}</p>
+                    <p class="text-muted mb-4">{{ employee.user.employeeid }}</p>
+                    
+                    <div class="d-grid gap-2">
+                        <a href="{{ url_for('admin.edit_employee', employee_id=employee.id) }}" class="btn btn-outline-primary">Edit Profile</a>
+                        <a href="mailto:{{ employee.email }}" class="btn btn-outline-secondary">Send Email</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Details Card -->
+        <div class="col-lg-8">
+            <div class="card shadow-sm mb-4">
+                <div class="card-header bg-white py-3">
+                    <h5 class="mb-0 text-primary"><i class="bi bi-person-lines-fill me-2"></i>Personal Details</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row g-3">
+                        <div class="col-sm-3 fw-bold text-secondary">Full Name</div>
+                        <div class="col-sm-9">{{ employee.prefix }} {{ employee.first_name }} {{ employee.last_name }}</div>
+
+                        <div class="col-sm-3 fw-bold text-secondary">Email</div>
+                        <div class="col-sm-9">{{ employee.email }}</div>
+
+                        <div class="col-sm-3 fw-bold text-secondary">Phone</div>
+                        <div class="col-sm-9">{{ employee.phone_number }}</div>
+
+                        <div class="col-sm-3 fw-bold text-secondary">Gender</div>
+                        <div class="col-sm-9">{{ employee.gender }}</div>
+
+                        <div class="col-sm-3 fw-bold text-secondary">Date of Birth</div>
+                        <div class="col-sm-9">{{ employee.date_of_birth.strftime('%d %b %Y') if employee.date_of_birth else '-' }}</div>
+                        
+                        <div class="col-sm-3 fw-bold text-secondary">Marital Status</div>
+                        <div class="col-sm-9">{{ employee.marital_status }}</div>
+
+                        <div class="col-sm-3 fw-bold text-secondary">Address</div>
+                        <div class="col-sm-9">{{ employee.address }}</div>
+                    </div>
+                    
+                    <hr class="my-4">
+                    
+                    <h6 class="text-primary mb-3">Identification & Bank</h6>
+                     <div class="row g-3">
+                        <div class="col-sm-3 fw-bold text-secondary">PAN</div>
+                        <div class="col-sm-3">{{ employee.pan_number }}</div>
+                        <div class="col-sm-3 fw-bold text-secondary">Aadhar</div>
+                        <div class="col-sm-3">{{ employee.aadhar_number }}</div>
+                        
+                        <div class="col-sm-3 fw-bold text-secondary">UAN</div>
+                        <div class="col-sm-3">{{ employee.uan_number or '-' }}</div>
+                        <div class="col-sm-3 fw-bold text-secondary">PF No</div>
+                        <div class="col-sm-3">{{ employee.pf_number or '-' }}</div>
+                        <div class="col-sm-3 fw-bold text-secondary">ESI No</div>
+                        <div class="col-sm-3">{{ employee.esi_number or '-' }}</div>
+                        
+                        <div class="col-sm-3 fw-bold text-secondary">Bank</div>
+                        <div class="col-sm-9">{{ employee.bank_name }} ({{ employee.branch }})</div>
+                        <div class="col-sm-3 fw-bold text-secondary">Account No</div>
+                        <div class="col-sm-3">{{ employee.bank_account_number }}</div>
+                        <div class="col-sm-3 fw-bold text-secondary">IFSC</div>
+                        <div class="col-sm-3">{{ employee.ifsc_code }}</div>
+                    </div>
+                    
+                    <hr class="my-4">
+                    
+                    <h6 class="text-primary mb-3">Emergency Contact</h6>
+                     <div class="row g-3">
+                        <div class="col-sm-3 fw-bold text-secondary">Contact</div>
+                        <div class="col-sm-9">{{ employee.emergency_contact }}</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card shadow-sm">
+                <div class="card-header bg-white py-3">
+                    <h5 class="mb-0 text-primary"><i class="bi bi-briefcase me-2"></i>Job Information</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row g-3">
+                        <div class="col-sm-3 fw-bold text-secondary">Status</div>
+                        <div class="col-sm-9">
+                            {% set status = employee.status_info %}
+                            <span class="badge {{ status.class }}">{{ status.text }}</span>
+                        </div>
+
+                        <div class="col-sm-3 fw-bold text-secondary">Emp. Type</div>
+                        <div class="col-sm-9"><span class="badge bg-light text-dark border">{{ employee.employment_type or 'Full-time' }}</span></div>
+
+                        <div class="col-sm-3 fw-bold text-secondary">Date of Joining</div>
+                        <div class="col-sm-9">{{ employee.date_of_joining.strftime('%d %b %Y') if employee.date_of_joining else '-' }}</div>
+
+                        {% if employee.is_resigned %}
+                        <div class="col-sm-3 fw-bold text-secondary">Notice Period</div>
+                        <div class="col-sm-9">{{ employee.notice_period or '-' }} Month(s)</div>
+
+                        <div class="col-sm-3 fw-bold text-secondary">Date of Leaving</div>
+                        <div class="col-sm-9">{{ employee.resigned_date.strftime('%d %b %Y') if employee.resigned_date else '-' }}</div>
+                        {% endif %}
+
+                        <div class="col-sm-3 fw-bold text-secondary">Reports To</div>
+                        <div class="col-sm-9">{{ employee.reports_to }}</div>
+                        
+                        <div class="col-sm-3 fw-bold text-secondary">Experience</div>
+                        <div class="col-sm-9">{{ employee.years_of_experience }}</div>
+                        
+                        <div class="col-sm-3 fw-bold text-secondary">Prev. Employer</div>
+                        <div class="col-sm-9">{{ employee.previous_employer }}</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tasks / Checklists -->
+            <div class="card shadow-sm mt-4">
+                <div class="card-header bg-white py-3">
+                    <h5 class="mb-0 text-primary"><i class="bi bi-list-check me-2"></i>Assigned Tasks & Checklists</h5>
+                </div>
+                <div class="card-body">
+                    {% if employee.assigned_tasks %}
+                        <div class="table-responsive">
+                            <table class="table table-sm table-hover align-middle">
+                                <thead class="bg-light extra-small text-uppercase">
+                                    <tr>
+                                        <th>Status</th>
+                                        <th>Task Description</th>
+                                        <th>Notes / Reason</th>
+                                        <th>Next Follow-up</th>
+                                        <th>History</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for task in employee.assigned_tasks %}
+                                    <tr>
+                                        <td>
+                                            <span class="text-{% if task.status == 'Completed' %}success{% elif task.status == 'Rejected' %}danger{% elif task.status == 'WIP' %}info{% else %}secondary{% endif %} fw-bold extra-small">
+                                                {{ task.status }}
+                                            </span>
+                                        </td>
+                                        <td class="small fw-semibold">{{ task.master_task.description }}</td>
+                                        <td class="small text-muted" style="max-width: 200px;">{{ task.reason or '-' }}</td>
+                                        <td class="small text-dark fw-bold">
+                                            {{ task.followup_date.strftime('%d %b %Y') if task.followup_date else '-' }}
+                                        </td>
+                                        <td>
+                                            {% if task.is_completed %}
+                                                <small class="extra-small text-muted d-block">Done by {{ task.completed_by }}</small>
+                                                <small class="extra-small text-muted">{{ task.completed_at.strftime('%Y-%m-%d %H:%M') }}</small>
+                                            {% else %}
+                                                -
+                                            {% endif %}
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    {% else %}
+                        <p class="text-muted text-center py-3">No tasks assigned to this employee.</p>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Employee Documents -->
+            <div class="card shadow-sm mt-4">
+                <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0 text-primary"><i class="bi bi-file-earmark-pdf me-2"></i>Employee Documents</h5>
+                    <button type="button" class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#uploadDocModal">
+                        <i class="bi bi-upload me-1"></i>Upload Document
+                    </button>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        {% set displayed_titles = namespace(titles=[]) %}
+                        {% for doc in employee.documents|sort(attribute='upload_date', reverse=True) %}
+                            {% if doc.title not in displayed_titles.titles %}
+                            <div class="col-md-6 mb-3">
+                                <div class="p-3 border rounded bg-light d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <div class="fw-bold text-dark">{{ doc.title }}</div>
+                                        <small class="text-muted">{{ doc.document_type }} • {{ doc.upload_date.strftime('%d %b %Y') }}</small>
+                                    </div>
+                                    <div class="d-flex gap-1">
+                                        <a href="{{ url_for('static', filename='documents/' + doc.file_path) }}" target="_blank" class="btn btn-sm btn-outline-primary">
+                                            <i class="bi bi-eye"></i>
+                                        </a>
+                                        <form action="{{ url_for('admin.delete_employee_document', doc_id=doc.id) }}" method="POST" onsubmit="return confirm('Delete this document?');">
+                                            <button type="submit" class="btn btn-sm btn-outline-danger">
+                                                <i class="bi bi-trash"></i>
+                                            </button>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                            {% set displayed_titles.titles = displayed_titles.titles + [doc.title] %}
+                            {% endif %}
+                        {% else %}
+                        <div class="col-12 text-center py-3">
+                            <p class="text-muted mb-0">No documents uploaded yet.</p>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Upload Document Modal -->
+            <div class="modal fade" id="uploadDocModal" tabindex="-1" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <form action="{{ url_for('admin.upload_employee_document', employee_id=employee.id) }}" method="POST" enctype="multipart/form-data">
+                            {{ doc_form.hidden_tag() }}
+                            <div class="modal-header">
+                                <h5 class="modal-title">Upload Employee Document</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <div class="form-group mb-3">
+                                    {{ doc_form.title.label(class="form-label") }}
+                                    {{ doc_form.title(class="form-control") }}
+                                </div>
+                                <div class="form-group mb-3">
+                                    {{ doc_form.document_type.label(class="form-label") }}
+                                    {{ doc_form.document_type(class="form-control") }}
+                                </div>
+                                <div class="form-group">
+                                    {{ doc_form.file.label(class="form-label") }}
+                                    {{ doc_form.file(class="form-control") }}
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                {{ doc_form.submit(class="btn btn-primary") }}
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

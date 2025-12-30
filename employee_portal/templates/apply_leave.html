@@ -1,0 +1,72 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <div class="row">
+        <div class="col-md-6 col-lg-5">
+            <!-- Header Section -->
+            <div class="mb-4">
+                <h3 class="fw-bold text-dark">Apply for Leave</h3>
+                <p class="text-muted small">Submit your leave request for approval.</p>
+            </div>
+
+            <!-- Focused Modal Pattern Card -->
+            <div class="card border-0 shadow-sm rounded-4" style="border: 1px solid #e2e8f0 !important;">
+                <div class="card-header bg-white py-3 border-0 rounded-top-4" style="border-left: 4px solid #e67e22 !important;">
+                    <h6 class="m-0 fw-semibold text-dark"><i class="bi bi-calendar-plus me-2 text-primary"></i>New Leave Application</h6>
+                </div>
+                <div class="card-body p-4">
+                    <form method="POST" action="">
+                        {{ form.hidden_tag() }}
+                        
+                        <div class="row g-2 mb-3">
+                            <div class="col-md-6">
+                                <label class="form-label small fw-semibold text-secondary text-uppercase" style="letter-spacing: 0.5px;">Start Date</label>
+                                {{ form.start_date(class="form-control shadow-none border-light bg-light rounded-3 py-2", type="date") }}
+                                {% for error in form.start_date.errors %}
+                                    <div class="text-danger extra-small mt-1">{{ error }}</div>
+                                {% endfor %}
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label small fw-semibold text-secondary text-uppercase" style="letter-spacing: 0.5px;">End Date</label>
+                                {{ form.end_date(class="form-control shadow-none border-light bg-light rounded-3 py-2", type="date") }}
+                                {% for error in form.end_date.errors %}
+                                    <div class="text-danger extra-small mt-1">{{ error }}</div>
+                                {% endfor %}
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label small fw-semibold text-secondary text-uppercase" style="letter-spacing: 0.5px;">Leave Type</label>
+                            {{ form.leave_type(class="form-select shadow-none border-light bg-light rounded-3 py-2") }}
+                        </div>
+
+                        <div class="mb-4">
+                            <label class="form-label small fw-semibold text-secondary text-uppercase" style="letter-spacing: 0.5px;">Reason</label>
+                            {{ form.reason(class="form-control shadow-none border-light bg-light rounded-3 py-2", rows="3", placeholder="Explain your reason...") }}
+                        </div>
+
+                        <div class="d-grid pt-2">
+                            <button type="submit" class="btn btn-primary rounded-pill py-2 fw-semibold shadow-sm">
+                                <i class="bi bi-send-fill me-2"></i>Submit Application
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            
+            <div class="mt-4">
+                <a href="{{ url_for('main.profile') }}" class="text-decoration-none text-muted small hover-orange">
+                    <i class="bi bi-arrow-left me-1"></i> Back to Profile
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .extra-small { font-size: 0.7rem; }
+    .hover-orange:hover { color: #e67e22 !important; transition: color 0.2s; }
+    .rounded-top-4 { border-top-left-radius: 12px !important; border-top-right-radius: 12px !important; }
+</style>
+{% endblock %}

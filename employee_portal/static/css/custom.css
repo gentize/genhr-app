@@ -1,0 +1,588 @@
+:root {
+    --bs-primary: #e67e22;
+    --bs-primary-rgb: 230, 126, 34;
+    --bs-success: #e67e22; /* Replaced Green with Orange as requested */
+    --bs-success-rgb: 230, 126, 34;
+    --bs-link-color: #e67e22;
+    --bs-link-hover-color: #d35400;
+}
+
+html {
+    box-sizing: border-box;
+}
+
+*, *::before, *::after {
+    box-sizing: inherit;
+}
+
+html, body {
+    height: 100%;
+}
+
+body {
+    font-family: 'Poppins', sans-serif;
+    background-color: #fff;
+    color: #333;
+    line-height: 1.6;
+}
+
+.navbar {
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    padding-top: 0.25rem;
+    padding-bottom: 0.25rem;
+}
+
+.genhr-logo-adjust {
+    margin-left: -8px;
+}
+
+.navbar-brand {
+    font-weight: 700;
+    font-size: 1.5rem;
+}
+
+.nav-pills .nav-link.active, .nav-pills .show>.nav-link {
+    background-color: #e67e22 !important;
+    color: #fff !important;
+}
+
+.nav-link {
+    color: #495057; /* Default link color */
+}
+
+.nav-link:hover {
+    color: #e67e22 !important;
+}
+
+.card {
+    border: none;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    border-radius: 12px;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 6px 16px rgba(0,0,0,0.12);
+}
+
+.card-header {
+    background-color: #f8f9fa;
+    border-bottom: 1px solid #e9ecef;
+    font-weight: 600;
+    font-size: 1.25rem;
+    padding: 1.5rem;
+    color: #343a40;
+}
+
+.card-body {
+    padding: 1.5rem;
+}
+
+/* Bootstrap Overrides for Classes if Variables fail or specific specificity needed */
+.bg-primary {
+    background-color: #e67e22 !important;
+}
+
+.text-primary {
+    color: #e67e22 !important;
+}
+
+.btn-primary {
+    background-color: #e67e22;
+    border-color: #e67e22;
+    border-radius: 50px;
+    padding: 10px 25px;
+    font-weight: 500;
+    transition: background-color 0.3s ease, border-color 0.3s ease, transform 0.2s ease;
+}
+
+.btn-primary:hover {
+    background-color: #d35400;
+    border-color: #c0392b;
+    transform: translateY(-2px);
+}
+
+.btn-outline-primary {
+    color: #e67e22;
+    border-color: #e67e22;
+    border-radius: 50px; /* Match other buttons */
+    padding: 8px 20px;
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+
+.btn-outline-primary:hover {
+    background-color: #e67e22;
+    border-color: #e67e22;
+    color: #fff;
+}
+
+.btn-success {
+    background-color: #e67e22; /* Elegant Orange instead of Green */
+    border-color: #e67e22;
+    border-radius: 50px;
+    padding: 8px 20px;
+    font-weight: 500;
+    transition: background-color 0.3s ease, border-color 0.3s ease;
+}
+
+.btn-success:hover {
+    background-color: #d35400;
+    border-color: #c0392b;
+}
+
+.btn-danger {
+    background-color: #dc3545; /* Keep danger red? User didn't specify Red. */
+    border-color: #dc3545;
+    border-radius: 50px;
+    padding: 8px 20px;
+    font-weight: 500;
+    transition: background-color 0.3s ease, border-color 0.3s ease;
+}
+
+.btn-danger:hover {
+    background-color: #c82333;
+    border-color: #bd2130;
+}
+
+.login-container .text-primary {
+    color: #e67e22 !important;
+}
+
+.login-container .btn-primary {
+    background-color: #e67e22;
+    border-color: #e67e22;
+}
+
+.login-container .btn-primary:hover {
+    background-color: #d35400;
+    border-color: #c0392b;
+}
+
+.login-container {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1.25rem 0;
+}
+
+.form-control {
+    border-radius: 8px;
+    border: 1px solid #ced4da;
+    padding: 10px 15px;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.form-control:focus {
+    border-color: #e67e22;
+    outline: 0;
+    box-shadow: 0 0 0 0.2rem rgba(230, 126, 34, 0.25);
+}
+
+.form-label {
+    font-weight: 500;
+    color: #495057;
+}
+
+.invalid-feedback {
+    color: #dc3545;
+}
+
+/* Flash Messages - Elegant Orange for Success, Defaults for others */
+.alert-success {
+    background-color: #e67e22 !important;
+    color: #fff !important;
+    border-color: #d35400 !important;
+}
+
+.alert-info {
+    background-color: #3498db !important;
+    color: #fff !important;
+    border-color: #2980b9 !important;
+}
+
+.login-page-body {
+    background-image: linear-gradient(rgba(255, 255, 255, 0.7), rgba(255, 255, 255, 0.7)), url('../img/map.PNG') !important;
+    background-size: cover !important;
+    background-repeat: no-repeat !important;
+    background-attachment: fixed !important;
+    background-color: #fff !important;
+}
+
+#login-container {
+    position: relative;
+}
+
+.think-image {
+    position: absolute;
+    top: 60px;
+    left: 20px;
+    width: 100px;
+    height: auto;
+    z-index: 10;
+}
+
+.form-check-label {
+    font-size: 0.875rem;
+    color: grey;
+}
+
+.grayscale {
+    filter: grayscale(100%);
+}
+
+/* Dashboard Gradients */
+.bg-gradient-orange { background: linear-gradient(135deg, #e67e22 0%, #f39c12 100%) !important; }
+.bg-gradient-green { background: linear-gradient(135deg, #2ecc71 0%, #27ae60 100%) !important; }
+.bg-gradient-red { background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%) !important; }
+.bg-gradient-blue { background: linear-gradient(135deg, #3498db 0%, #2980b9 100%) !important; }
+.bg-gradient-yellow { background: linear-gradient(135deg, #f1c40f 0%, #f39c12 100%) !important; color: #fff !important; }
+.bg-gradient-navy { background: linear-gradient(135deg, #34495e 0%, #2c3e50 100%) !important; }
+.bg-gradient-purple { background: linear-gradient(135deg, #9b59b6 0%, #8e44ad 100%) !important; }
+.bg-gradient-teal { background: linear-gradient(135deg, #1abc9c 0%, #16a085 100%) !important; }
+
+/* Status Colors */
+.status-active { color: #198754 !important; } /* Green */
+.status-resigned { color: #dc3545 !important; } /* Red */
+.bg-active-green { background-color: #198754 !important; } /* Green Background */
+
+/* Org Chart Styling */
+.google-visualization-orgchart-node {
+    border: none !important;
+    background: transparent !important;
+    box-shadow: none !important;
+    padding: 10px !important;
+}
+
+.google-visualization-orgchart-lineleft, 
+.google-visualization-orgchart-lineright, 
+.google-visualization-orgchart-linebottom {
+    border-color: #bdc3c7 !important;
+    border-width: 2px !important;
+}
+
+.org-node-card {
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+    padding: 12px;
+    border: 1px solid #f0f0f0;
+    transition: all 0.2s ease;
+    min-width: 150px;
+    text-align: center;
+}
+
+.org-node-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 15px rgba(230, 126, 34, 0.15);
+    border-color: #e67e22;
+}
+
+.org-node-card img {
+    border: 2px solid #fff;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+/* Sidebar - Bootstrap overrides */
+.sidebar .nav-link {
+    font-size: 0.95rem;
+    padding: 0.75rem 1rem;
+    border-radius: 0.25rem;
+}
+
+.sidebar .nav-link:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+.sidebar .nav-link.active {
+    color: #fff !important;
+    background-color: #e67e22 !important; /* Active link bg orange */
+}
+
+/* Sidebar Chevron Rotation */
+.sidebar .nav-link[aria-expanded="true"] .bi-chevron-down {
+    transform: rotate(180deg);
+}
+
+.sidebar .bi-chevron-down {
+    transition: transform 0.3s ease;
+}
+
+/* Sidebar Calendar */
+.sidebar-calendar-container {
+    border-top: 1px solid rgba(255,255,255,0.1);
+    padding-top: 1.5rem;
+}
+
+#sidebarCalendar {
+    font-size: 0.75rem;
+}
+
+.calendar-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.calendar-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 2px;
+    text-align: center;
+}
+
+.calendar-day-head {
+    font-weight: bold;
+    color: #888;
+    padding-bottom: 5px;
+}
+
+.calendar-day {
+    padding: 5px 0;
+    border-radius: 4px;
+    cursor: default;
+}
+
+.calendar-day.today {
+    background-color: #e67e22;
+    color: #fff;
+    font-weight: bold;
+}
+
+.calendar-day.holiday {
+    background-color: rgba(231, 76, 60, 0.2);
+    color: #e74c3c;
+    font-weight: bold;
+    border: 1px solid rgba(231, 76, 60, 0.3);
+}
+
+.calendar-day.sunday {
+    color: #666;
+    background-color: rgba(255, 255, 255, 0.05);
+}
+
+.calendar-day.other-month {
+    opacity: 0.2;
+}
+
+.calendar-nav-btn {
+    cursor: pointer;
+    padding: 0 5px;
+}
+
+.calendar-nav-btn:hover {
+    color: #e67e22;
+}
+
+/* WOW Gradient Widgets */
+.wow-dashboard-bg {
+    background-color: #f8f9fa !important;
+}
+
+.wow-glass-card {
+    border: none !important;
+    border-radius: 12px !important; /* Sharper corners for elegance */
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    color: #ffffff !important;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.05) !important;
+    position: relative;
+    overflow: hidden;
+}
+
+.wow-glass-card:hover {
+    transform: translateY(-4px) !important; /* Subtle lift */
+    box-shadow: 0 8px 20px rgba(0,0,0,0.1) !important;
+}
+
+.stat-card .card-body {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.1rem 1.35rem !important; /* Slightly reduced padding */
+    z-index: 2;
+    position: relative;
+}
+
+.stat-card .icon-box {
+    width: 44px; /* Slightly reduced icon box */
+    height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 10px;
+    font-size: 1.4rem;
+    background: rgba(255, 255, 255, 0.2);
+    color: #fff;
+    transition: all 0.3s ease;
+    margin-bottom: 0;
+}
+
+.stat-card:hover .icon-box {
+    transform: rotate(-5deg) scale(1.1);
+}
+
+/* Color Gradients */
+.wow-primary { background: linear-gradient(135deg, #e67e22 0%, #f39c12 100%) !important; }
+.wow-orange { background: linear-gradient(135deg, #e67e22 0%, #f39c12 100%) !important; }
+.wow-green { background: linear-gradient(135deg, #2ecc71 0%, #27ae60 100%) !important; }
+.wow-red { background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%) !important; }
+.wow-blue { background: linear-gradient(135deg, #3498db 0%, #2980b9 100%) !important; }
+.wow-yellow { background: linear-gradient(135deg, #f1c40f 0%, #f39c12 100%) !important; }
+.wow-purple { background: linear-gradient(135deg, #9b59b6 0%, #8e44ad 100%) !important; }
+.wow-navy { background: linear-gradient(135deg, #34495e 0%, #2c3e50 100%) !important; }
+.wow-teal { background: linear-gradient(135deg, #1abc9c 0%, #16a085 100%) !important; }
+/* Dashboard Welcome Card - Pure Glass Style */
+.glass-header {
+    background: rgba(255, 255, 255, 0.7) !important;
+    backdrop-filter: blur(15px) saturate(180%);
+    -webkit-backdrop-filter: blur(15px) saturate(180%);
+    border: 1px solid rgba(255, 255, 255, 0.4) !important;
+    border-radius: 12px !important;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.03) !important;
+    color: #1e293b !important;
+}
+
+.glass-header .text-muted {
+    color: #64748b !important;
+}
+
+.glass-header .border-start {
+    border-color: rgba(0,0,0,0.1) !important;
+}/* Dashboard Welcome Card - Abstract Pattern Style */
+.pattern-header {
+    background-color: #ffffff !important;
+    background-image:  radial-gradient(#e67e22 0.5px, transparent 0.5px), radial-gradient(#e67e22 0.5px, #ffffff 0.5px) !important;
+    background-size: 20px 20px !important;
+    background-position: 0 0,10px 10px !important;
+    border: 1px solid #f1f3f5 !important;
+    border-left: 5px solid #e67e22 !important;
+    border-radius: 12px !important;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.03) !important;
+    color: #1e293b !important;
+}
+
+/* Dashboard Welcome Card - Minimalist White Bordered Style */
+.minimal-bordered-header {
+    background-color: #ffffff !important;
+    border: 1px solid #e2e8f0 !important;
+    border-left: 4px solid #e67e22 !important;
+    border-radius: 8px !important;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.02) !important;
+    color: #1e293b !important;
+}
+
+/* Dashboard Welcome Card - Midnight Professional Style */
+.midnight-header {
+    background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%) !important;
+    border: none !important;
+    border-radius: 12px !important;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.15) !important;
+    color: #ffffff !important;
+}
+
+.midnight-header h5 {
+    color: #ffffff !important;
+}
+
+.midnight-header .text-muted {
+    color: rgba(255, 255, 255, 0.7) !important;
+}
+
+.midnight-header .border-start {
+    border-color: rgba(255, 255, 255, 0.2) !important;
+}
+/* Dashboard Welcome Card - Elegant Orange Style */
+.elegant-orange-header {
+    background: linear-gradient(135deg, #e67e22 0%, #f39c12 100%) !important;
+    border: none !important;
+    border-radius: 12px !important;
+    box-shadow: 0 4px 15px rgba(230, 126, 34, 0.2) !important;
+    color: #ffffff !important;
+}
+
+.elegant-orange-header h5, .elegant-orange-header h4 {
+    color: #ffffff !important;
+    font-size: 1.75rem !important;
+    margin-bottom: 0.5rem !important;
+}
+
+.elegant-orange-header .greeting-text {
+    font-size: 1.1rem;
+    opacity: 0.9;
+}
+
+.elegant-orange-header .text-muted {
+    color: rgba(255, 255, 255, 0.8) !important;
+}
+
+.elegant-orange-header .border-start {
+    border-color: rgba(255, 255, 255, 0.3) !important;
+}
+
+.wow-teal { background: linear-gradient(135deg, #1abc9c 0%, #16a085 100%) !important; }
+.wow-info { background: linear-gradient(135deg, #3498db 0%, #5dade2 100%) !important; }
+.wow-black { background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%) !important; }
+
+.stat-label {
+    text-transform: uppercase;
+    font-size: 0.7rem; /* Slightly reduced */
+    font-weight: 700;
+    color: rgba(255, 255, 255, 0.9);
+    letter-spacing: 1.2px;
+    margin-bottom: 0.2rem;
+}
+
+.stat-value {
+    font-size: 1.65rem; /* Slightly reduced from 1.8rem */
+    font-weight: 800;
+    color: #ffffff;
+}
+
+/* Compact Quick Action Widgets */
+.quick-stat-card .card-body {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.6rem 1rem !important; /* Ultra Slim */
+}
+
+.quick-stat-card .icon-box {
+    width: 28px;
+    height: 28px;
+    font-size: 0.95rem;
+    border-radius: 6px;
+}
+
+.quick-stat-card .stat-label {
+    font-size: 0.6rem;
+    letter-spacing: 0.8px;
+    margin-bottom: 0;
+}
+
+/* Scrollable Sidebar */
+#sidebarMenu {
+    height: 100vh;
+    overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: #e67e22 #2c3e50;
+}
+
+#sidebarMenu::-webkit-scrollbar {
+    width: 6px;
+}
+
+#sidebarMenu::-webkit-scrollbar-track {
+    background: #212529;
+}
+
+#sidebarMenu::-webkit-scrollbar-thumb {
+    background-color: #e67e22;
+    border-radius: 20px;
+}
+
+.sidebar .position-sticky {
+    height: auto !important;
+}

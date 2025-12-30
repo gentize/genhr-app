@@ -1,0 +1,263 @@
+WARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.
+ * Running on http://127.0.0.1:5000
+Press CTRL+C to quit
+ * Restarting with stat
+ * Debugger is active!
+ * Debugger PIN: 367-973-958
+127.0.0.1 - - [29/Dec/2025 20:44:54] "GET /admin/manage_data HTTP/1.1" 200 -
+127.0.0.1 - - [29/Dec/2025 20:44:54] "GET /static/css/custom.css HTTP/1.1" 304 -
+127.0.0.1 - - [29/Dec/2025 20:44:54] "GET /static/img/GenHR_LOGO.png HTTP/1.1" 304 -
+127.0.0.1 - - [29/Dec/2025 20:44:54] "GET /static/img/default.jpg HTTP/1.1" 304 -
+127.0.0.1 - - [29/Dec/2025 20:48:31] "GET /admin/assets/add HTTP/1.1" 200 -
+127.0.0.1 - - [29/Dec/2025 20:48:32] "GET /static/css/custom.css HTTP/1.1" 304 -
+127.0.0.1 - - [29/Dec/2025 20:48:32] "GET /static/img/GenHR_LOGO.png HTTP/1.1" 304 -
+127.0.0.1 - - [29/Dec/2025 20:48:32] "GET /static/img/default.jpg HTTP/1.1" 304 -
+ * Detected change in 'C:\\GenHR\\employee_portal\\excel.py', reloading
+ * Restarting with stat
+ * Debugger is active!
+ * Debugger PIN: 367-973-958
+ * Detected change in 'C:\\GenHR\\employee_portal\\admin\\routes.py', reloading
+ * Restarting with stat
+ * Debugger is active!
+ * Debugger PIN: 367-973-958
+ * Detected change in 'C:\\GenHR\\employee_portal\\admin\\routes.py', reloading
+ * Restarting with stat
+ * Debugger is active!
+ * Debugger PIN: 367-973-958
+127.0.0.1 - - [29/Dec/2025 20:56:21] "GET /admin/assets/add HTTP/1.1" 200 -
+127.0.0.1 - - [29/Dec/2025 20:56:21] "GET /static/img/GenHR_LOGO.png HTTP/1.1" 304 -
+127.0.0.1 - - [29/Dec/2025 20:56:21] "GET /static/img/default.jpg HTTP/1.1" 304 -
+127.0.0.1 - - [29/Dec/2025 20:56:21] "GET /static/css/custom.css HTTP/1.1" 200 -
+127.0.0.1 - - [29/Dec/2025 20:56:31] "GET /admin/dashboard HTTP/1.1" 200 -
+127.0.0.1 - - [29/Dec/2025 20:56:31] "GET /static/css/custom.css HTTP/1.1" 304 -
+127.0.0.1 - - [29/Dec/2025 20:56:31] "GET /static/img/GenHR_LOGO.png HTTP/1.1" 304 -
+127.0.0.1 - - [29/Dec/2025 20:56:31] "GET /static/img/default.jpg HTTP/1.1" 304 -
+127.0.0.1 - - [29/Dec/2025 20:56:57] "GET /admin/assets/add HTTP/1.1" 200 -
+127.0.0.1 - - [29/Dec/2025 20:56:57] "GET /static/css/custom.css HTTP/1.1" 304 -
+127.0.0.1 - - [29/Dec/2025 20:56:57] "GET /static/img/default.jpg HTTP/1.1" 304 -
+127.0.0.1 - - [29/Dec/2025 20:56:57] "GET /static/img/GenHR_LOGO.png HTTP/1.1" 304 -
+127.0.0.1 - - [29/Dec/2025 20:58:30] "GET /admin/assets HTTP/1.1" 200 -
+127.0.0.1 - - [29/Dec/2025 20:58:30] "GET /static/css/custom.css HTTP/1.1" 304 -
+127.0.0.1 - - [29/Dec/2025 20:58:30] "GET /static/img/GenHR_LOGO.png HTTP/1.1" 304 -
+127.0.0.1 - - [29/Dec/2025 20:58:30] "GET /static/img/default.jpg HTTP/1.1" 304 -
+127.0.0.1 - - [29/Dec/2025 20:58:42] "GET /admin/assets/add HTTP/1.1" 200 -
+127.0.0.1 - - [29/Dec/2025 20:58:42] "GET /static/css/custom.css HTTP/1.1" 304 -
+127.0.0.1 - - [29/Dec/2025 20:58:42] "GET /static/img/GenHR_LOGO.png HTTP/1.1" 304 -
+127.0.0.1 - - [29/Dec/2025 20:58:42] "GET /static/img/default.jpg HTTP/1.1" 304 -
+ * Detected change in 'C:\\GenHR\\employee_portal\\admin\\routes.py', reloading
+ * Restarting with stat
+ * Debugger is active!
+ * Debugger PIN: 367-973-958
+ * Detected change in 'C:\\GenHR\\employee_portal\\admin\\routes.py', reloading
+ * Restarting with stat
+ * Debugger is active!
+ * Debugger PIN: 367-973-958
+127.0.0.1 - - [29/Dec/2025 21:05:19] "GET /admin/assets HTTP/1.1" 200 -
+127.0.0.1 - - [29/Dec/2025 21:05:19] "GET /static/css/custom.css HTTP/1.1" 304 -
+127.0.0.1 - - [29/Dec/2025 21:05:19] "GET /static/img/GenHR_LOGO.png HTTP/1.1" 304 -
+127.0.0.1 - - [29/Dec/2025 21:05:19] "GET /static/img/default.jpg HTTP/1.1" 304 -
+127.0.0.1 - - [29/Dec/2025 21:05:24] "GET /admin/assets/add HTTP/1.1" 200 -
+127.0.0.1 - - [29/Dec/2025 21:05:24] "GET /static/css/custom.css HTTP/1.1" 304 -
+127.0.0.1 - - [29/Dec/2025 21:05:24] "GET /static/img/GenHR_LOGO.png HTTP/1.1" 304 -
+127.0.0.1 - - [29/Dec/2025 21:05:24] "GET /static/img/default.jpg HTTP/1.1" 304 -
+127.0.0.1 - - [29/Dec/2025 21:05:57] "GET /admin/bill_estimation HTTP/1.1" 200 -
+127.0.0.1 - - [29/Dec/2025 21:05:57] "GET /static/css/custom.css HTTP/1.1" 304 -
+127.0.0.1 - - [29/Dec/2025 21:05:57] "GET /static/img/default.jpg HTTP/1.1" 304 -
+127.0.0.1 - - [29/Dec/2025 21:05:57] "GET /static/img/GenHR_LOGO.png HTTP/1.1" 304 -
+127.0.0.1 - - [29/Dec/2025 21:05:57] "GET /static/img/logo.PNG HTTP/1.1" 304 -
+127.0.0.1 - - [29/Dec/2025 21:06:21] "GET /admin/liquidity/purchase-orders HTTP/1.1" 200 -
+127.0.0.1 - - [29/Dec/2025 21:06:21] "GET /static/css/custom.css HTTP/1.1" 304 -
+127.0.0.1 - - [29/Dec/2025 21:06:21] "GET /static/img/GenHR_LOGO.png HTTP/1.1" 304 -
+127.0.0.1 - - [29/Dec/2025 21:06:21] "GET /static/img/default.jpg HTTP/1.1" 304 -
+127.0.0.1 - - [29/Dec/2025 21:06:24] "GET /admin/liquidity/purchase-orders/3/print HTTP/1.1" 200 -
+127.0.0.1 - - [29/Dec/2025 21:06:24] "GET /static/img/logo.PNG HTTP/1.1" 304 -
+ * Detected change in 'C:\\GenHR\\employee_portal\\auth\\forms.py', reloading
+ * Restarting with stat
+ * Debugger is active!
+ * Debugger PIN: 367-973-958
+ * Detected change in 'C:\\GenHR\\employee_portal\\auth\\forms.py', reloading
+ * Restarting with stat
+ * Debugger is active!
+ * Debugger PIN: 367-973-958
+ * Detected change in 'C:\\GenHR\\employee_portal\\admin\\routes.py', reloading
+ * Restarting with stat
+ * Debugger is active!
+ * Debugger PIN: 367-973-958
+ * Detected change in 'C:\\GenHR\\employee_portal\\pdf.py', reloading
+ * Restarting with stat
+ * Debugger is active!
+ * Debugger PIN: 367-973-958
+ * Detected change in 'C:\\GenHR\\employee_portal\\pdf.py', reloading
+ * Restarting with stat
+ * Debugger is active!
+ * Debugger PIN: 367-973-958
+ * Detected change in 'C:\\GenHR\\employee_portal\\admin\\routes.py', reloading
+ * Restarting with stat
+ * Debugger is active!
+ * Debugger PIN: 367-973-958
+ * Detected change in 'C:\\GenHR\\employee_portal\\admin\\routes.py', reloading
+ * Restarting with stat
+ * Debugger is active!
+ * Debugger PIN: 367-973-958
+127.0.0.1 - - [29/Dec/2025 21:25:19] "GET /admin/liquidity/purchase-orders HTTP/1.1" 200 -
+127.0.0.1 - - [29/Dec/2025 21:25:19] "GET /static/css/custom.css HTTP/1.1" 304 -
+127.0.0.1 - - [29/Dec/2025 21:25:19] "GET /static/img/GenHR_LOGO.png HTTP/1.1" 304 -
+127.0.0.1 - - [29/Dec/2025 21:25:19] "GET /static/img/default.jpg HTTP/1.1" 304 -
+127.0.0.1 - - [29/Dec/2025 21:25:23] "GET /admin/letter-head HTTP/1.1" 200 -
+127.0.0.1 - - [29/Dec/2025 21:25:23] "GET /static/css/custom.css HTTP/1.1" 304 -
+127.0.0.1 - - [29/Dec/2025 21:25:23] "GET /static/img/GenHR_LOGO.png HTTP/1.1" 304 -
+127.0.0.1 - - [29/Dec/2025 21:25:23] "GET /static/img/default.jpg HTTP/1.1" 304 -
+127.0.0.1 - - [29/Dec/2025 21:27:51] "POST /admin/letter-head HTTP/1.1" 500 -
+Traceback (most recent call last):
+  File "C:\Users\parthi\AppData\Local\Programs\Python\Python314\Lib\site-packages\flask\app.py", line 1536, in __call__
+    return self.wsgi_app(environ, start_response)
+           ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\parthi\AppData\Local\Programs\Python\Python314\Lib\site-packages\flask\app.py", line 1514, in wsgi_app
+    response = self.handle_exception(e)
+  File "C:\Users\parthi\AppData\Local\Programs\Python\Python314\Lib\site-packages\flask\app.py", line 1511, in wsgi_app
+    response = self.full_dispatch_request()
+  File "C:\Users\parthi\AppData\Local\Programs\Python\Python314\Lib\site-packages\flask\app.py", line 919, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "C:\Users\parthi\AppData\Local\Programs\Python\Python314\Lib\site-packages\flask\app.py", line 917, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "C:\Users\parthi\AppData\Local\Programs\Python\Python314\Lib\site-packages\flask\app.py", line 902, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "C:\GenHR\employee_portal\admin\routes.py", line 30, in decorated_function
+    return f(*args, **kwargs)
+  File "C:\GenHR\employee_portal\admin\routes.py", line 2841, in letter_head
+    filename = generate_letter_head_pdf(data)
+  File "C:\GenHR\employee_portal\pdf.py", line 647, in generate_letter_head_pdf
+    content_pdf.output(content_stream)
+    ~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^
+  File "C:\Users\parthi\AppData\Local\Programs\Python\Python314\Lib\site-packages\fpdf\fpdf.py", line 1065, in output
+    self.close()
+    ~~~~~~~~~~^^
+  File "C:\Users\parthi\AppData\Local\Programs\Python\Python314\Lib\site-packages\fpdf\fpdf.py", line 246, in close
+    self._enddoc()
+    ~~~~~~~~~~~~^^
+  File "C:\Users\parthi\AppData\Local\Programs\Python\Python314\Lib\site-packages\fpdf\fpdf.py", line 1636, in _enddoc
+    self._putpages()
+    ~~~~~~~~~~~~~~^^
+  File "C:\Users\parthi\AppData\Local\Programs\Python\Python314\Lib\site-packages\fpdf\fpdf.py", line 1170, in _putpages
+    p = self.pages[n].encode("latin1") if PY3K else self.pages[n]
+        ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^
+UnicodeEncodeError: 'latin-1' codec can't encode character '\u2019' in position 116: ordinal not in range(256)
+127.0.0.1 - - [29/Dec/2025 21:27:51] "GET /admin/letter-head?__debugger__=yes&cmd=resource&f=style.css HTTP/1.1" 200 -
+127.0.0.1 - - [29/Dec/2025 21:27:51] "GET /admin/letter-head?__debugger__=yes&cmd=resource&f=debugger.js HTTP/1.1" 200 -
+127.0.0.1 - - [29/Dec/2025 21:27:51] "GET /admin/letter-head?__debugger__=yes&cmd=resource&f=console.png&s=GJeY4aQ8Osokk7e2QZkK HTTP/1.1" 200 -
+127.0.0.1 - - [29/Dec/2025 21:27:51] "GET /admin/letter-head?__debugger__=yes&cmd=resource&f=console.png HTTP/1.1" 200 -
+ * Detected change in 'C:\\GenHR\\employee_portal\\pdf.py', reloading
+ * Restarting with stat
+ * Debugger is active!
+ * Debugger PIN: 367-973-958
+127.0.0.1 - - [29/Dec/2025 21:28:31] "POST /admin/letter-head HTTP/1.1" 500 -
+Traceback (most recent call last):
+  File "C:\Users\parthi\AppData\Local\Programs\Python\Python314\Lib\site-packages\flask\app.py", line 1536, in __call__
+    return self.wsgi_app(environ, start_response)
+           ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\parthi\AppData\Local\Programs\Python\Python314\Lib\site-packages\flask\app.py", line 1514, in wsgi_app
+    response = self.handle_exception(e)
+  File "C:\Users\parthi\AppData\Local\Programs\Python\Python314\Lib\site-packages\flask\app.py", line 1511, in wsgi_app
+    response = self.full_dispatch_request()
+  File "C:\Users\parthi\AppData\Local\Programs\Python\Python314\Lib\site-packages\flask\app.py", line 919, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "C:\Users\parthi\AppData\Local\Programs\Python\Python314\Lib\site-packages\flask\app.py", line 917, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "C:\Users\parthi\AppData\Local\Programs\Python\Python314\Lib\site-packages\flask\app.py", line 902, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "C:\GenHR\employee_portal\admin\routes.py", line 30, in decorated_function
+    return f(*args, **kwargs)
+  File "C:\GenHR\employee_portal\admin\routes.py", line 2841, in letter_head
+    filename = generate_letter_head_pdf(data)
+  File "C:\GenHR\employee_portal\pdf.py", line 658, in generate_letter_head_pdf
+    content_pdf.output(content_stream)
+    ~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^
+  File "C:\Users\parthi\AppData\Local\Programs\Python\Python314\Lib\site-packages\fpdf\fpdf.py", line 1079, in output
+    f=open(name,'wb')
+TypeError: expected str, bytes or os.PathLike object, not BytesIO
+127.0.0.1 - - [29/Dec/2025 21:28:31] "GET /admin/letter-head?__debugger__=yes&cmd=resource&f=style.css HTTP/1.1" 304 -
+127.0.0.1 - - [29/Dec/2025 21:28:31] "GET /admin/letter-head?__debugger__=yes&cmd=resource&f=debugger.js HTTP/1.1" 304 -
+127.0.0.1 - - [29/Dec/2025 21:28:31] "GET /admin/letter-head?__debugger__=yes&cmd=resource&f=console.png&s=ZHtSkkZZCmL8CGIBKuSP HTTP/1.1" 200 -
+127.0.0.1 - - [29/Dec/2025 21:28:31] "GET /admin/letter-head?__debugger__=yes&cmd=resource&f=console.png HTTP/1.1" 304 -
+ * Detected change in 'C:\\GenHR\\employee_portal\\pdf.py', reloading
+ * Restarting with stat
+ * Debugger is active!
+ * Debugger PIN: 367-973-958
+127.0.0.1 - - [29/Dec/2025 21:29:30] "POST /admin/letter-head HTTP/1.1" 200 -
+ * Detected change in 'C:\\GenHR\\employee_portal\\pdf.py', reloading
+ * Restarting with stat
+ * Debugger is active!
+ * Debugger PIN: 367-973-958
+127.0.0.1 - - [29/Dec/2025 21:33:12] "GET /admin/letter-head HTTP/1.1" 200 -
+127.0.0.1 - - [29/Dec/2025 21:33:16] "POST /admin/letter-head HTTP/1.1" 200 -
+127.0.0.1 - - [29/Dec/2025 21:34:35] "GET /admin/liquidity/purchase-orders HTTP/1.1" 200 -
+127.0.0.1 - - [29/Dec/2025 21:34:35] "GET /static/css/custom.css HTTP/1.1" 304 -
+127.0.0.1 - - [29/Dec/2025 21:34:35] "GET /static/img/GenHR_LOGO.png HTTP/1.1" 304 -
+127.0.0.1 - - [29/Dec/2025 21:34:35] "GET /static/img/default.jpg HTTP/1.1" 304 -
+127.0.0.1 - - [29/Dec/2025 21:34:37] "GET /admin/liquidity/purchase-orders/2/print HTTP/1.1" 200 -
+127.0.0.1 - - [29/Dec/2025 21:34:37] "GET /static/img/833100600879a8f6.png HTTP/1.1" 200 -
+127.0.0.1 - - [29/Dec/2025 21:34:37] "GET /static/img/logo.PNG HTTP/1.1" 304 -
+ * Detected change in 'C:\\GenHR\\employee_portal\\pdf.py', reloading
+ * Restarting with stat
+ * Debugger is active!
+ * Debugger PIN: 367-973-958
+ * Detected change in 'C:\\GenHR\\employee_portal\\pdf.py', reloading
+ * Restarting with stat
+ * Debugger is active!
+ * Debugger PIN: 367-973-958
+ * Detected change in 'C:\\GenHR\\employee_portal\\pdf.py', reloading
+ * Restarting with stat
+ * Debugger is active!
+ * Debugger PIN: 367-973-958
+127.0.0.1 - - [29/Dec/2025 21:35:44] "GET /admin/letter-head HTTP/1.1" 200 -
+127.0.0.1 - - [29/Dec/2025 21:35:44] "GET /static/css/custom.css HTTP/1.1" 304 -
+127.0.0.1 - - [29/Dec/2025 21:35:44] "GET /static/img/GenHR_LOGO.png HTTP/1.1" 304 -
+127.0.0.1 - - [29/Dec/2025 21:35:44] "GET /static/img/default.jpg HTTP/1.1" 304 -
+127.0.0.1 - - [29/Dec/2025 21:36:16] "POST /admin/letter-head HTTP/1.1" 200 -
+ * Detected change in 'C:\\GenHR\\employee_portal\\pdf.py', reloading
+ * Restarting with stat
+ * Debugger is active!
+ * Debugger PIN: 367-973-958
+127.0.0.1 - - [29/Dec/2025 21:38:17] "POST /admin/letter-head HTTP/1.1" 200 -
+ * Detected change in 'C:\\GenHR\\employee_portal\\pdf.py', reloading
+ * Restarting with stat
+ * Debugger is active!
+ * Debugger PIN: 367-973-958
+127.0.0.1 - - [29/Dec/2025 21:40:24] "POST /admin/letter-head HTTP/1.1" 200 -
+ * Detected change in 'C:\\GenHR\\employee_portal\\pdf.py', reloading
+ * Restarting with stat
+ * Debugger is active!
+ * Debugger PIN: 367-973-958
+127.0.0.1 - - [29/Dec/2025 21:53:52] "POST /admin/letter-head HTTP/1.1" 200 -
+ * Detected change in 'C:\\GenHR\\employee_portal\\pdf.py', reloading
+ * Restarting with stat
+ * Debugger is active!
+ * Debugger PIN: 367-973-958
+127.0.0.1 - - [29/Dec/2025 22:00:10] "POST /admin/letter-head HTTP/1.1" 200 -
+ * Detected change in 'C:\\GenHR\\employee_portal\\pdf.py', reloading
+ * Restarting with stat
+ * Debugger is active!
+ * Debugger PIN: 367-973-958
+127.0.0.1 - - [29/Dec/2025 22:02:28] "POST /admin/letter-head HTTP/1.1" 200 -
+ * Detected change in 'C:\\GenHR\\run.py', reloading
+ * Restarting with stat
+ * Debugger is active!
+ * Debugger PIN: 367-973-958
+ * Detected change in 'C:\\GenHR\\config.py', reloading
+ * Restarting with stat
+ * Debugger is active!
+ * Debugger PIN: 367-973-958
+127.0.0.1 - - [29/Dec/2025 22:31:07] "GET /admin/dashboard HTTP/1.1" 200 -
+127.0.0.1 - - [29/Dec/2025 22:31:07] "GET /static/css/custom.css HTTP/1.1" 304 -
+127.0.0.1 - - [29/Dec/2025 22:31:07] "GET /static/img/GenHR_LOGO.png HTTP/1.1" 304 -
+127.0.0.1 - - [29/Dec/2025 22:31:07] "GET /static/img/default.jpg HTTP/1.1" 304 -
+127.0.0.1 - - [29/Dec/2025 22:32:09] "GET /admin/dashboard HTTP/1.1" 200 -
+127.0.0.1 - - [29/Dec/2025 22:32:09] "GET /static/css/custom.css HTTP/1.1" 304 -
+127.0.0.1 - - [29/Dec/2025 22:32:09] "GET /static/img/GenHR_LOGO.png HTTP/1.1" 304 -
+127.0.0.1 - - [29/Dec/2025 22:32:09] "GET /static/img/default.jpg HTTP/1.1" 304 -
+ * Detected change in 'C:\\GenHR\\config.py', reloading
+ * Restarting with stat
+ * Debugger is active!
+ * Debugger PIN: 367-973-958

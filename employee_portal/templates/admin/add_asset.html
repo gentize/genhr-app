@@ -1,0 +1,139 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <div class="row justify-content-center">
+        <div class="col-md-10 col-lg-9">
+            <div class="mb-4">
+                <h3 class="fw-bold text-dark">{{ title }}</h3>
+                <p class="text-muted small">Enter precise equipment specifications or use bulk upload for multiple items.</p>
+            </div>
+
+            <!-- Navigation Tabs -->
+            <ul class="nav nav-pills mb-4" id="assetAddTabs" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link {% if active_tab != 'bulk' %}active{% endif %} rounded-pill px-4 me-2" id="individual-tab" data-bs-toggle="pill" data-bs-target="#individual" type="button" role="tab">
+                        <i class="bi bi-plus-circle me-2"></i>Individual Entry
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link {% if active_tab == 'bulk' %}active{% endif %} rounded-pill px-4" id="bulk-upload-tab" data-bs-toggle="pill" data-bs-target="#bulk-upload" type="button" role="tab">
+                        <i class="bi bi-cloud-upload me-2"></i>Bulk Upload
+                    </button>
+                </li>
+            </ul>
+
+            <div class="tab-content" id="assetAddTabsContent">
+                <!-- Individual Entry Tab -->
+                <div class="tab-pane fade {% if active_tab != 'bulk' %}show active{% endif %}" id="individual" role="tabpanel">
+                    <div class="card border-0 shadow-sm rounded-4" style="border: 1px solid #e2e8f0 !important;">
+                        <div class="card-header bg-white py-3 border-0 rounded-top-4" style="border-left: 4px solid #e67e22 !important;">
+                            <h6 class="m-0 fw-semibold text-dark"><i class="bi bi-pc-display me-2 text-primary"></i>Technical Specifications</h6>
+                        </div>
+                        <div class="card-body p-4">
+                            <form method="POST" action="">
+                                {{ form.hidden_tag() }}
+                                
+                                <div class="row g-3 mb-4">
+                                    <div class="col-md-6">
+                                        <label class="form-label small fw-semibold text-secondary text-uppercase" style="letter-spacing: 0.5px;">Asset Name</label>
+                                        {{ form.name(class="form-control shadow-none border-light bg-light rounded-3 py-2") }}
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label small fw-semibold text-secondary text-uppercase" style="letter-spacing: 0.5px;">Category</label>
+                                        {{ form.category(class="form-select shadow-none border-light bg-light rounded-3 py-2") }}
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label class="form-label small fw-semibold text-secondary text-uppercase" style="letter-spacing: 0.5px;">Brand</label>
+                                        {{ form.brand(class="form-control shadow-none border-light bg-light rounded-3 py-2") }}
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label class="form-label small fw-semibold text-secondary text-uppercase" style="letter-spacing: 0.5px;">Model</label>
+                                        {{ form.model_name(class="form-control shadow-none border-light bg-light rounded-3 py-2") }}
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label class="form-label small fw-semibold text-secondary text-uppercase" style="letter-spacing: 0.5px;">Serial Number</label>
+                                        {{ form.serial_number(class="form-control shadow-none border-light bg-light rounded-3 py-2") }}
+                                    </div>
+                                </div>
+
+                                <h6 class="text-primary text-uppercase extra-small fw-bold mb-3 border-bottom pb-2">Procurement & Assignment</h6>
+                                <div class="row g-3 mb-4">
+                                    <div class="col-md-4">
+                                        <label class="form-label small fw-semibold text-secondary text-uppercase" style="letter-spacing: 0.5px;">Purchase Date</label>
+                                        {{ form.purchase_date(class="form-control shadow-none border-light bg-light rounded-3 py-2", type="date") }}
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label class="form-label small fw-semibold text-secondary text-uppercase" style="letter-spacing: 0.5px;">Purchase Cost</label>
+                                        <div class="input-group input-group-sm">
+                                            <span class="input-group-text bg-white border-light rounded-start-3">₹</span>
+                                            {{ form.purchase_cost(class="form-control shadow-none border-light bg-light rounded-end-3 py-2") }}
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label class="form-label small fw-semibold text-secondary text-uppercase" style="letter-spacing: 0.5px;">Warranty Expiry</label>
+                                        {{ form.warranty_expiry(class="form-control shadow-none border-light bg-light rounded-3 py-2", type="date") }}
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label small fw-semibold text-secondary text-uppercase" style="letter-spacing: 0.5px;">Vendor / Owner</label>
+                                        {{ form.vendor(class="form-select shadow-none border-light bg-light rounded-3 py-2") }}
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label small fw-semibold text-secondary text-uppercase" style="letter-spacing: 0.5px;">Current User</label>
+                                        {{ form.assigned_to(class="form-select shadow-none border-light bg-light rounded-3 py-2") }}
+                                    </div>
+                                </div>
+
+                                <div class="d-grid gap-2 d-md-flex justify-content-md-end border-top pt-4">
+                                    <a href="{{ url_for('admin.view_assets') }}" class="btn btn-outline-secondary rounded-pill px-4 fw-semibold me-md-2">Cancel</a>
+                                    <button type="submit" class="btn btn-primary rounded-pill px-5 fw-bold shadow-sm">Save Asset</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Bulk Upload Tab -->
+                <div class="tab-pane fade {% if active_tab == 'bulk' %}show active{% endif %}" id="bulk-upload" role="tabpanel">
+                    <div class="card border-0 shadow-sm rounded-4 overflow-hidden" style="border: 1px solid #e2e8f0 !important;">
+                        <div class="card-header bg-white py-3 border-0" style="border-left: 4px solid #3498db !important;">
+                            <h6 class="m-0 fw-semibold text-dark"><i class="bi bi-cloud-upload me-2 text-primary"></i>Bulk Asset Onboarding</h6>
+                        </div>
+                        <div class="card-body p-5 text-center">
+                            <div class="mb-4">
+                                <i class="bi bi-file-earmark-excel text-success" style="font-size: 4rem;"></i>
+                            </div>
+                            <h5 class="fw-bold mb-3">Upload Asset Template</h5>
+                            <p class="text-muted mb-4 mx-auto" style="max-width: 500px;">
+                                Download the official template, fill in your asset details, and upload it here to add multiple assets at once.
+                            </p>
+                            
+                            <div class="d-flex justify-content-center gap-3 mb-5">
+                                <a href="{{ url_for('admin.download_asset_template') }}" class="btn btn-outline-primary rounded-pill px-4 fw-semibold">
+                                    <i class="bi bi-download me-2"></i>Download Template
+                                </a>
+                            </div>
+
+                            <form action="{{ url_for('admin.bulk_upload_assets') }}" method="POST" enctype="multipart/form-data" class="mx-auto" style="max-width: 450px;">
+                                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                <div class="mb-4">
+                                    <input type="file" name="file" class="form-control rounded-3" accept=".xlsx, .xls" required>
+                                    <div class="form-text mt-2 text-start small">Supported formats: .xlsx, .xls</div>
+                                </div>
+                                <button type="submit" class="btn btn-primary w-100 rounded-pill py-2 fw-bold shadow-sm">
+                                    <i class="bi bi-upload me-2"></i>Start Bulk Upload
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .extra-small { font-size: 0.7rem; }
+    .rounded-top-4 { border-top-left-radius: 12px !important; border-top-right-radius: 12px !important; }
+</style>
+{% endblock %}

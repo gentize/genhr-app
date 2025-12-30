@@ -1,0 +1,97 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container-fluid py-4">
+    <div class="row">
+        <!-- Add Announcement Column -->
+        <div class="col-md-4 mb-4">
+            <div class="mb-4">
+                <h3 class="fw-bold text-dark">Notice Board</h3>
+                <p class="text-muted small">Broadcast company-wide updates.</p>
+            </div>
+
+            <div class="card border-0 shadow-sm rounded-4" style="border: 1px solid #e2e8f0 !important;">
+                <div class="card-header bg-white py-3 border-0 rounded-top-4" style="border-left: 4px solid #e67e22 !important;">
+                    <h6 class="m-0 fw-semibold text-dark"><i class="bi bi-megaphone me-2 text-primary"></i>New Announcement</h6>
+                </div>
+                <div class="card-body p-4">
+                    <form method="POST" action="">
+                        {{ form.hidden_tag() }}
+                        <div class="mb-3">
+                            <label class="form-label small fw-semibold text-secondary text-uppercase" style="letter-spacing: 0.5px;">Title</label>
+                            {{ form.title(class="form-control shadow-none border-light bg-light rounded-3 py-2", placeholder="e.g. Office Closed on Friday") }}
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label small fw-semibold text-secondary text-uppercase" style="letter-spacing: 0.5px;">Content</label>
+                            {{ form.content(class="form-control shadow-none border-light bg-light rounded-3 py-2", rows=5) }}
+                        </div>
+                        <div class="form-check form-switch mb-4">
+                            {{ form.is_active(class="form-check-input", id="activeSwitch") }}
+                            <label class="form-check-label small fw-bold" for="activeSwitch">Active / Visible</label>
+                        </div>
+                        <div class="d-grid pt-2">
+                            <button type="submit" class="btn btn-primary rounded-pill py-2 fw-semibold shadow-sm">
+                                <i class="bi bi-send me-2"></i>Post Update
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- List Announcements Column -->
+        <div class="col-md-8">
+            <div class="card border-0 shadow-sm rounded-4" style="border: 1px solid #e2e8f0 !important;">
+                <div class="card-header bg-white py-3 border-0 rounded-top-4" style="border-left: 4px solid #e67e22 !important;">
+                    <h6 class="m-0 fw-semibold text-dark"><i class="bi bi-clock-history me-2 text-primary"></i>History</h6>
+                </div>
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle mb-0">
+                            <thead class="bg-light text-muted extra-small text-uppercase">
+                                <tr>
+                                    <th class="ps-4">Date</th>
+                                    <th>Title</th>
+                                    <th>Status</th>
+                                    <th class="pe-4 text-end">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for ann in announcements %}
+                                <tr>
+                                    <td class="ps-4 small fw-medium text-dark">{{ ann.date_posted.strftime('%d %b %y') }}</td>
+                                    <td class="small fw-semibold text-dark">{{ ann.title }}</td>
+                                    <td>
+                                        <span class="text-{% if ann.is_active %}success{% else %}secondary{% endif %} fw-bold extra-small">
+                                            {{ 'Active' if ann.is_active else 'Hidden' }}
+                                        </span>
+                                    </td>
+                                    <td class="pe-4 text-end">
+                                        <div class="d-flex justify-content-end gap-1">
+                                            <form action="{{ url_for('admin.toggle_announcement', ann_id=ann.id) }}" method="POST">
+                                                <button type="submit" class="btn btn-sm btn-light text-{% if ann.is_active %}warning{% else %}success{% endif %} rounded-circle shadow-sm" style="width: 32px; height: 32px; display: flex; align-items: center; justify-content: center;">
+                                                    <i class="bi bi-eye{% if ann.is_active %}-slash{% endif %}"></i>
+                                                </button>
+                                            </form>
+                                            <form action="{{ url_for('admin.delete_announcement', ann_id=ann.id) }}" method="POST" onsubmit="return confirm('Delete permanently?');">
+                                                <button type="submit" class="btn btn-sm btn-light text-danger rounded-circle shadow-sm" style="width: 32px; height: 32px; display: flex; align-items: center; justify-content: center;">
+                                                    <i class="bi bi-trash"></i>
+                                                </button>
+                                            </form>
+                                        </div>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .extra-small { font-size: 0.7rem; }
+    .rounded-top-4 { border-top-left-radius: 12px !important; border-top-right-radius: 12px !important; }
+</style>
+{% endblock %}

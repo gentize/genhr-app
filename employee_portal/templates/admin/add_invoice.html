@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <div class="row justify-content-center">
+        <div class="col-md-10 col-lg-9">
+            <div class="mb-4">
+                <h3 class="fw-bold text-dark">{{ title }}</h3>
+                <p class="text-muted small">Record a new invoice.</p>
+            </div>
+
+            <div class="card border-0 shadow-sm rounded-4" style="border: 1px solid #e2e8f0 !important;">
+                <div class="card-header bg-white py-3 border-0 rounded-top-4" style="border-left: 4px solid #0d6efd !important;">
+                    <h6 class="m-0 fw-semibold text-dark"><i class="bi bi-receipt-cutoff me-2 text-primary"></i>Invoice Details</h6>
+                </div>
+                <div class="card-body p-4">
+                    <form method="POST" action="" enctype="multipart/form-data">
+                        {{ form.hidden_tag() }}
+                        
+                        <div class="row g-3 mb-4">
+                            <div class="col-md-6">
+                                <label class="form-label small fw-semibold text-secondary text-uppercase" style="letter-spacing: 0.5px;">Invoice Number</label>
+                                {{ form.invoice_number(class="form-control shadow-none border-light bg-light rounded-3 py-2") }}
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label small fw-semibold text-secondary text-uppercase" style="letter-spacing: 0.5px;">Vendor</label>
+                                {{ form.vendor(class="form-select shadow-none border-light bg-light rounded-3 py-2") }}
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label small fw-semibold text-secondary text-uppercase" style="letter-spacing: 0.5px;">Invoice Date</label>
+                                {{ form.date(class="form-control shadow-none border-light bg-light rounded-3 py-2", type="date") }}
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label small fw-semibold text-secondary text-uppercase" style="letter-spacing: 0.5px;">Due Date</label>
+                                {{ form.due_date(class="form-control shadow-none border-light bg-light rounded-3 py-2", type="date") }}
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label small fw-semibold text-secondary text-uppercase" style="letter-spacing: 0.5px;">Amount</label>
+                                <div class="input-group input-group-sm">
+                                    <span class="input-group-text bg-white border-light rounded-start-3">₹</span>
+                                    {{ form.amount(class="form-control shadow-none border-light bg-light rounded-end-3 py-2") }}
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label small fw-semibold text-secondary text-uppercase" style="letter-spacing: 0.5px;">Status</label>
+                                {{ form.status(class="form-select shadow-none border-light bg-light rounded-3 py-2") }}
+                            </div>
+                            <div class="col-md-12">
+                                <label class="form-label small fw-semibold text-secondary text-uppercase" style="letter-spacing: 0.5px;">Description</label>
+                                {{ form.description(class="form-control shadow-none border-light bg-light rounded-3 py-2", rows="3") }}
+                            </div>
+                             <div class="col-md-12">
+                                <label class="form-label small fw-semibold text-secondary text-uppercase" style="letter-spacing: 0.5px;">Upload Invoice (PDF/Image)</label>
+                                {{ form.file(class="form-control shadow-none border-light bg-light rounded-3 py-2") }}
+                            </div>
+                        </div>
+
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-end border-top pt-4">
+                            <a href="{{ url_for('admin.manage_invoices') }}" class="btn btn-outline-secondary rounded-pill px-4 fw-semibold me-md-2">Cancel</a>
+                            <button type="submit" class="btn btn-primary rounded-pill px-5 fw-bold shadow-sm">Save Invoice</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .extra-small { font-size: 0.7rem; }
+    .rounded-top-4 { border-top-left-radius: 12px !important; border-top-right-radius: 12px !important; }
+</style>
+{% endblock %}

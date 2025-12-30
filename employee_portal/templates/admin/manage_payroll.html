@@ -1,0 +1,285 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container-fluid py-4">
+    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+        <div>
+            <h3 class="fw-bold text-dark mb-0">Payroll Processing</h3>
+            <p class="text-muted small">Manage monthly salaries and bulk generation.</p>
+        </div>
+        <div class="d-flex gap-2">
+            <button class="btn btn-sm btn-primary rounded-pill px-4 fw-semibold shadow-sm" data-bs-toggle="modal" data-bs-target="#bulkGenerateModal">
+                <i class="bi bi-stack me-2"></i>Bulk Generate Drafts
+            </button>
+            <button class="btn btn-sm btn-success rounded-pill px-4 fw-semibold shadow-sm" data-bs-toggle="modal" data-bs-target="#bulkPayModal">
+                <i class="bi bi-cash me-2"></i>Bulk Mark as Paid
+            </button>
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- Individual Payroll Form -->
+        <div class="col-md-5 mb-4">
+            <div class="card border-0 shadow-sm rounded-4" style="border: 1px solid #e2e8f0 !important;">
+                <div class="card-header bg-white py-3 border-0 rounded-top-4" style="border-left: 4px solid #e67e22 !important;">
+                    <h6 class="m-0 fw-semibold text-dark"><i class="bi bi-person-check-fill me-2 text-primary"></i>Single Employee Entry</h6>
+                </div>
+                <div class="card-body p-4">
+                    <form method="POST" action="">
+                        {{ form.hidden_tag() }}
+                        
+                        <div class="mb-3">
+                            <label class="form-label small fw-semibold text-secondary text-uppercase" style="letter-spacing: 0.5px;">Employee</label>
+                            {{ form.employee(class="form-select shadow-none border-light bg-light rounded-3 py-2", id="empSelect") }}
+                        </div>
+
+                        <div class="row g-2 mb-4">
+                            <div class="col-6">
+                                <label class="form-label small fw-semibold text-secondary text-uppercase" style="letter-spacing: 0.5px;">Period Start</label>
+                                {{ form.pay_period_start(class="form-control shadow-none border-light bg-light rounded-3 py-2", type="date") }}
+                            </div>
+                            <div class="col-6">
+                                <label class="form-label small fw-semibold text-secondary text-uppercase" style="letter-spacing: 0.5px;">Period End</label>
+                                {{ form.pay_period_end(class="form-control shadow-none border-light bg-light rounded-3 py-2", type="date") }}
+                            </div>
+                        </div>
+
+                        <div class="p-3 bg-light rounded-4 mb-4 border border-white">
+                            <h6 class="extra-small fw-bold text-uppercase text-primary mb-2">Adjustments</h6>
+                            <div class="row g-2">
+                                <div class="col-4">
+                                    <label class="extra-small opacity-75">Bonus</label>
+                                    {{ form.bonus(class="form-control form-control-sm border-0 bg-white") }}
+                                </div>
+                                <div class="col-4">
+                                    <label class="extra-small opacity-75">Incentives</label>
+                                    {{ form.incentives(class="form-control form-control-sm border-0 bg-white") }}
+                                </div>
+                                <div class="col-4">
+                                    <label class="extra-small opacity-75">Loss of Pay</label>
+                                    {{ form.lop(class="form-control form-control-sm border-0 bg-white") }}
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mb-4">
+                            <label class="form-label small fw-semibold text-secondary text-uppercase" style="letter-spacing: 0.5px;">Processing Status</label>
+                            {{ form.status(class="form-select shadow-none border-light bg-light rounded-3 py-2") }}
+                        </div>
+
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-primary rounded-pill py-2 fw-semibold shadow-sm">
+                                <i class="bi bi-file-earmark-pdf me-2"></i>Generate Record
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- History Table -->
+        <div class="col-md-7">
+            <div class="card border-0 shadow-sm rounded-4 overflow-hidden" style="border: 1px solid #e2e8f0 !important;">
+                <div class="card-header bg-white py-3 border-0 rounded-top-4 d-flex justify-content-between align-items-center" style="border-left: 4px solid #e67e22 !important;">
+                    <h6 class="m-0 fw-semibold text-dark"><i class="bi bi-clock-history me-2 text-primary"></i>Payroll History</h6>
+                    
+                    <form class="row g-1 align-items-center" method="GET">
+                        <div class="col-auto">
+                            <select name="month" class="form-select form-select-sm border-light bg-light shadow-none rounded-pill">
+                                {% for m in range(1, 13) %}
+                                <option value="{{ m }}" {% if m == filter_month %}selected{% endif %}>
+                                    {{ ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"][m-1] }}
+                                </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-auto">
+                            <select name="year" class="form-select form-select-sm border-light bg-light shadow-none rounded-pill">
+                                {% for y in range(2024, 2031) %}
+                                <option value="{{ y }}" {% if y == filter_year %}selected{% endif %}>{{ y }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-auto">
+                            <button type="submit" class="btn btn-sm btn-light rounded-circle shadow-sm" style="width: 30px; height: 30px;"><i class="bi bi-arrow-right-short"></i></button>
+                        </div>
+                    </form>
+                </div>
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle mb-0">
+                            <thead class="bg-light text-muted extra-small text-uppercase">
+                                <tr>
+                                    <th class="ps-4">Employee</th>
+                                    <th>Net Salary</th>
+                                    <th>Status</th>
+                                    <th class="pe-4 text-end">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for p in payrolls %}
+                                <tr>
+                                    <td class="ps-4">
+                                        <div class="fw-bold text-dark small">{{ p.employee.first_name }} {{ p.employee.last_name }}</div>
+                                        <div class="extra-small text-muted">{{ p.pay_period_end.strftime('%d %b %Y') }}</div>
+                                    </td>
+                                    <td class="small fw-bold text-dark">₹{{ "{:,.2f}".format(p.net_salary) }}</td>
+                                    <td>
+                                        <span class="text-{% if p.status == 'Paid' %}success{% elif p.status == 'Processed' %}primary{% else %}warning text-dark{% endif %} fw-bold extra-small">
+                                            {{ p.status }}
+                                        </span>
+                                    </td>
+                                    <td class="pe-4 text-end">
+                                        <div class="d-flex justify-content-end gap-1">
+                                            <a href="{{ url_for('main.download_payslip', payroll_id=p.id) }}" class="btn btn-sm btn-light text-info rounded-circle shadow-sm" title="PDF" style="width: 32px; height: 32px; display: flex; align-items: center; justify-content: center;">
+                                                <i class="bi bi-file-earmark-pdf"></i>
+                                            </a>
+                                            {% if p.status == 'Draft' %}
+                                            <form action="{{ url_for('admin.update_payroll_status', payroll_id=p.id, status='Paid') }}" method="POST">
+                                                <button type="submit" class="btn btn-sm btn-light text-success rounded-circle shadow-sm" title="Mark Paid" style="width: 32px; height: 32px; display: flex; align-items: center; justify-content: center;">
+                                                    <i class="bi bi-cash"></i>
+                                                </button>
+                                            </form>
+                                            {% endif %}
+                                        </div>
+                                    </td>
+                                </tr>
+                                {% else %}
+                                <tr><td colspan="4" class="text-center py-5 text-muted">No records for this period.</td></tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modals (Cloned style) -->
+<div class="modal fade" id="bulkGenerateModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 shadow-lg rounded-4 overflow-hidden">
+            <form action="{{ url_for('admin.bulk_generate_payroll') }}" method="POST">
+                <div class="modal-header border-0 bg-white py-3" style="border-left: 4px solid #e67e22 !important;">
+                    <h5 class="modal-title fw-bold text-dark">Bulk Generate Drafts</h5>
+                    <button type="button" class="btn-close shadow-none" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body p-4 bg-white text-center">
+                    <p class="small text-muted mb-4">Create salary drafts for all employees with a defined structure.</p>
+                    <div class="row g-3">
+                        <div class="col-6">
+                            <label class="form-label small fw-bold text-secondary text-uppercase">Month</label>
+                            <select name="month" class="form-select bg-light border-0 shadow-none rounded-3 py-2">
+                                {% for m in range(1, 13) %}
+                                <option value="{{ m }}" {% if m == filter_month %}selected{% endif %}>{{ ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"][m-1] }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-6">
+                            <label class="form-label small fw-bold text-secondary text-uppercase">Year</label>
+                            <select name="year" class="form-select bg-light border-0 shadow-none rounded-3 py-2">
+                                {% for y in range(2024, 2031) %}
+                                <option value="{{ y }}" {% if y == filter_year %}selected{% endif %}>{{ y }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer border-0 bg-light p-3">
+                    <button type="button" class="btn btn-light rounded-pill px-4 btn-sm" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary rounded-pill px-4 btn-sm shadow-sm fw-semibold">Generate All</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="bulkPayModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 shadow-lg rounded-4 overflow-hidden">
+            <form action="{{ url_for('admin.bulk_update_payroll_status', status='Paid') }}" method="POST">
+                <div class="modal-header border-0 bg-white py-3" style="border-left: 4px solid #198754 !important;">
+                    <h5 class="modal-title fw-bold text-dark">Bulk Mark as Paid</h5>
+                    <button type="button" class="btn-close shadow-none" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body p-4 bg-white text-center">
+                    <div class="alert alert-warning border-0 rounded-3 small mb-4">
+                        <i class="bi bi-exclamation-triangle-fill me-2"></i>All records for the selected period will be marked as <strong>PAID</strong>.
+                    </div>
+                    <div class="row g-3">
+                        <div class="col-6">
+                            <label class="form-label small fw-bold text-secondary text-uppercase">Target Month</label>
+                            <select name="month" class="form-select bg-light border-0 shadow-none rounded-3 py-2">
+                                {% for m in range(1, 13) %}
+                                <option value="{{ m }}" {% if m == filter_month %}selected{% endif %}>{{ ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"][m-1] }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-6">
+                            <label class="form-label small fw-bold text-secondary text-uppercase">Target Year</label>
+                            <select name="year" class="form-select bg-light border-0 shadow-none rounded-3 py-2">
+                                {% for y in range(2024, 2031) %}
+                                <option value="{{ y }}" {% if y == filter_year %}selected{% endif %}>{{ y }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer border-0 bg-light p-3">
+                    <button type="button" class="btn btn-light rounded-pill px-4 btn-sm" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-success rounded-pill px-4 btn-sm shadow-sm fw-semibold">Confirm Payment</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    $(document).ready(function() {
+        $('#empSelect').on('change', function() {
+            const empId = $(this).val();
+            if (!empId) return;
+
+            const today = new Date();
+            const month = today.getMonth() + 1;
+            const year = today.getFullYear();
+
+            fetch(`/admin/api/payroll/prefill/${empId}?month=${month}&year=${year}`)
+                .then(res => res.json())
+                .then(data => {
+                    if (data.error) {
+                        alert(data.error);
+                        return;
+                    }
+                    
+                    // Fill standard fields
+                    $('input[name="basic"]').val(data.basic);
+                    $('input[name="hra"]').val(data.hra);
+                    $('input[name="conveyance"]').val(data.conveyance);
+                    $('input[name="medical"]').val(data.medical);
+                    $('input[name="special_allowance"]').val(data.special_allowance);
+                    $('input[name="pf"]').val(data.pf);
+                    $('input[name="esi"]').val(data.esi);
+                    $('input[name="professional_tax"]').val(data.professional_tax);
+                    $('input[name="reimbursements"]').val(data.reimbursements);
+                    
+                    // Days
+                    $('input[name="days_in_month"]').val(data.days_in_month);
+                    
+                    // Auto-calculate LOP days if worked days < days in month
+                    if (data.net_worked_days < data.days_in_month) {
+                        const lopDays = data.days_in_month - data.net_worked_days;
+                        $('input[name="lop_days"]').val(lopDays);
+                    } else {
+                        $('input[name="lop_days"]').val(0);
+                    }
+                });
+        });
+    });
+</script>
+
+<style>
+    .extra-small { font-size: 0.7rem; }
+    .rounded-top-4 { border-top-left-radius: 12px !important; border-top-right-radius: 12px !important; }
+</style>
+{% endblock %}

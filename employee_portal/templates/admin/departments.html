@@ -1,0 +1,79 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <div class="row">
+        <!-- Add Department Column -->
+        <div class="col-md-4 mb-4">
+            <div class="mb-4">
+                <h3 class="fw-bold text-dark">Departments</h3>
+                <p class="text-muted small">Manage organizational divisions.</p>
+            </div>
+
+            <div class="card border-0 shadow-sm rounded-4" style="border: 1px solid #e2e8f0 !important;">
+                <div class="card-header bg-white py-3 border-0 rounded-top-4" style="border-left: 4px solid #e67e22 !important;">
+                    <h6 class="m-0 fw-semibold text-dark"><i class="bi bi-plus-circle me-2 text-primary"></i>Add New</h6>
+                </div>
+                <div class="card-body p-4">
+                    <form method="POST" action="{{ url_for('admin.add_department') }}">
+                        {{ form.hidden_tag() }}
+                        <div class="mb-4">
+                            <label class="form-label small fw-semibold text-secondary text-uppercase" style="letter-spacing: 0.5px;">Department Name</label>
+                            {{ form.name(class="form-control shadow-none border-light bg-light rounded-3 py-2" + (" is-invalid" if form.name.errors else "")) }}
+                            {% for error in form.name.errors %}
+                                <div class="invalid-feedback">{{ error }}</div>
+                            {% endfor %}
+                        </div>
+
+                        <div class="d-grid pt-2">
+                            <button type="submit" class="btn btn-primary rounded-pill py-2 fw-semibold shadow-sm">
+                                <i class="bi bi-save me-2"></i>Save Department
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Master List Column -->
+        <div class="col-md-8">
+            <div class="card border-0 shadow-sm rounded-4" style="border: 1px solid #e2e8f0 !important;">
+                <div class="card-header bg-white py-3 border-0 rounded-top-4" style="border-left: 4px solid #e67e22 !important;">
+                    <h6 class="m-0 fw-semibold text-dark"><i class="bi bi-list-ul me-2 text-primary"></i>Existing Records</h6>
+                </div>
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle mb-0">
+                            <thead class="bg-light text-muted extra-small text-uppercase">
+                                <tr>
+                                    <th class="ps-4 py-3">Name</th>
+                                    <th class="pe-4 text-end">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for dept in departments %}
+                                <tr>
+                                    <td class="ps-4 fw-bold text-dark">{{ dept.name }}</td>
+                                    <td class="pe-4 text-end">
+                                        <form action="{{ url_for('admin.delete_department', dept_id=dept.id) }}" method="POST">
+                                            <button type="submit" class="btn btn-sm btn-light text-danger rounded-circle shadow-sm" onclick="return confirm('Remove this department?');" style="width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; float: right;">
+                                                <i class="bi bi-trash-fill"></i>
+                                            </button>
+                                        </form>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .extra-small { font-size: 0.7rem; }
+    .rounded-top-4 { border-top-left-radius: 12px !important; border-top-right-radius: 12px !important; }
+</style>
+{% endblock %}

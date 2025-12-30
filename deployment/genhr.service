@@ -1,0 +1,15 @@
+[Unit]
+Description=Gunicorn instance to serve GenHR
+After=network.target
+
+[Service]
+User=www-data
+Group=www-data
+WorkingDirectory=/var/www/GenHR
+Environment="PATH=/var/www/GenHR/venv/bin"
+Environment="SECRET_KEY=a-very-secret-key-change-this"
+# Ensure the instance path is absolute for Gunicorn
+ExecStart=/var/www/GenHR/venv/bin/gunicorn --workers 3 --bind 127.0.0.1:8000 run:app
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,109 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+        <div>
+            <h3 class="fw-bold text-dark mb-0">Asset Inventory</h3>
+            <p class="text-muted small">Track and manage company equipment assignments.</p>
+        </div>
+        <div class="d-flex gap-2">
+            <a href="{{ url_for('admin.export_assets') }}" class="btn btn-sm btn-outline-primary rounded-pill px-4 fw-semibold">
+                <i class="bi bi-download me-2"></i>Export
+            </a>
+            <a href="{{ url_for('admin.add_asset') }}" class="btn btn-sm btn-primary rounded-pill px-4 fw-semibold shadow-sm">
+                <i class="bi bi-plus-lg me-2"></i>Add Asset
+            </a>
+        </div>
+    </div>
+
+    <!-- Search Section -->
+    <div class="card border-0 shadow-sm rounded-4 mb-4" style="border: 1px solid #e2e8f0 !important;">
+        <div class="card-body p-2">
+            <form action="{{ url_for('admin.view_assets') }}" method="GET">
+                <div class="input-group">
+                    <span class="input-group-text bg-transparent border-0 ps-3"><i class="bi bi-search text-muted"></i></span>
+                    <input type="text" name="search_query" class="form-control border-0 shadow-none ps-2" placeholder="Search by name, brand, or serial..." value="{{ search_query }}">
+                    <button type="submit" class="btn btn-primary rounded-pill px-4 m-1 fw-semibold">Search</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Assets List -->
+    <div class="card border-0 shadow-sm rounded-4 overflow-hidden" style="border: 1px solid #e2e8f0 !important;">
+        <div class="card-header bg-white py-3 border-0 rounded-top-4" style="border-left: 4px solid #e67e22 !important;">
+            <h6 class="m-0 fw-semibold text-dark"><i class="bi bi-pc-display me-2 text-primary"></i>Equipment Registry</h6>
+        </div>
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead class="bg-light text-muted extra-small text-uppercase">
+                        <tr>
+                            <th class="ps-4 py-3">Asset Details</th>
+                            <th>Serial Number</th>
+                            <th>Condition</th>
+                            <th>Status</th>
+                            <th>Assigned To</th>
+                            <th class="text-end pe-4">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for asset in assets %}
+                        <tr>
+                            <td class="ps-4">
+                                <div class="fw-bold text-dark small">{{ asset.name }}</div>
+                                <div class="text-muted extra-small text-uppercase">{{ asset.category }} • {{ asset.brand or 'Generic' }}</div>
+                            </td>
+                            <td><span class="font-monospace bg-light px-2 py-1 rounded extra-small border text-secondary">{{ asset.serial_number }}</span></td>
+                            <td>
+                                <span class="text-primary fw-semibold extra-small">
+                                    {{ asset.condition }}
+                                </span>
+                            </td>
+                            <td>
+                                <span class="text-{% if asset.status == 'Available' %}success{% else %}primary{% endif %} fw-bold extra-small">
+                                    {{ asset.status }}
+                                </span>
+                            </td>
+                            <td>
+                                {% if asset.assigned_employee %}
+                                    <a href="{{ url_for('admin.admin_view_employee_profile', employee_id=asset.assigned_employee.id) }}" class="text-decoration-none fw-semibold text-dark small">
+                                        <i class="bi bi-person-circle me-1 text-muted"></i>{{ asset.assigned_employee.first_name }}
+                                    </a>
+                                {% else %}
+                                    <span class="text-muted extra-small">Stock</span>
+                                {% endif %}
+                            </td>
+                            <td class="text-end pe-4">
+                                <div class="d-flex justify-content-end gap-2">
+                                    <a href="{{ url_for('admin.view_asset_details', asset_id=asset.id) }}" class="btn btn-sm btn-light text-primary rounded-circle shadow-sm" style="width: 32px; height: 32px; display: flex; align-items: center; justify-content: center;">
+                                        <i class="bi bi-eye-fill"></i>
+                                    </a>
+                                    <a href="{{ url_for('admin.edit_asset', asset_id=asset.id) }}" class="btn btn-sm btn-light text-secondary rounded-circle shadow-sm" style="width: 32px; height: 32px; display: flex; align-items: center; justify-content: center;">
+                                        <i class="bi bi-pencil-fill"></i>
+                                    </a>
+                                    <form action="{{ url_for('admin.delete_asset', asset_id=asset.id) }}" method="POST">
+                                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                        <button type="submit" class="btn btn-sm btn-light text-danger rounded-circle shadow-sm" onclick="return confirm('Delete this asset?');" style="width: 32px; height: 32px; display: flex; align-items: center; justify-content: center;">
+                                            <i class="bi bi-trash-fill"></i>
+                                        </button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                        {% else %}
+                        <tr><td colspan="6" class="text-center py-5 text-muted">No inventory records found.</td></tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .extra-small { font-size: 0.7rem; }
+    .rounded-top-4 { border-top-left-radius: 12px !important; border-top-right-radius: 12px !important; }
+</style>
+{% endblock %}

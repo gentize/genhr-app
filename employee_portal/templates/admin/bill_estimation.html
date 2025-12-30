@@ -1,0 +1,175 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <div class="row justify-content-center">
+        <div class="col-md-10 col-lg-9">
+            <div class="d-flex align-items-center justify-content-between mb-4">
+                <div>
+                    <h3 class="fw-bold text-dark mb-0">Bill Estimation</h3>
+                    <p class="text-muted small mb-0">Create a bill estimate.</p>
+                </div>
+                <a href="{{ url_for('admin.bill_estimation_history') }}" class="btn btn-sm btn-outline-primary rounded-pill px-4 fw-semibold shadow-sm">
+                    <i class="bi bi-clock-history me-2"></i>History
+                </a>
+            </div>
+
+            <div class="card border-0 shadow-sm rounded-4" style="border: 1px solid #e2e8f0 !important;">
+                <div class="card-header bg-white py-3 border-0 rounded-top-4" style="border-left: 4px solid #0d6efd !important;">
+                    <div class="d-flex align-items-center justify-content-between">
+                         <h6 class="m-0 fw-semibold text-dark"><i class="bi bi-calculator me-2 text-primary"></i>Estimate Details</h6>
+                         <img src="{{ url_for('static', filename='img/logo.PNG') }}" alt="Logo" style="height: 30px;">
+                    </div>
+                </div>
+                <div class="card-body p-4">
+                    <form method="POST" action="{{ url_for('admin.bill_estimation') }}" onsubmit="return syncItems()">
+                        {{ form.hidden_tag() }}
+                        
+                        <div class="row g-3 mb-4">
+                            <div class="col-md-6">
+                                <label class="form-label small fw-semibold text-secondary text-uppercase" style="letter-spacing: 0.5px;">Date</label>
+                                {{ form.date(class="form-control shadow-none border-light bg-light rounded-3 py-2", type="date") }}
+                            </div>
+                            
+                            <!-- Dynamic Items Section -->
+                            <div class="col-md-12">
+                                <label class="form-label small fw-semibold text-secondary text-uppercase" style="letter-spacing: 0.5px;">Items</label>
+                                <div class="table-responsive border rounded-3 bg-light p-3">
+                                    <table class="table table-borderless mb-0" id="itemsTable">
+                                        <thead>
+                                            <tr class="text-muted extra-small text-uppercase">
+                                                <th style="width: 40%;">Item Description</th>
+                                                <th style="width: 15%;">Qty</th>
+                                                <th style="width: 20%;">Price (₹)</th>
+                                                <th style="width: 20%;">Total (₹)</th>
+                                                <th style="width: 5%;"></th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="itemsBody">
+                                            <!-- Rows will be added here -->
+                                        </tbody>
+                                        <tfoot>
+                                            <tr>
+                                                <td colspan="5">
+                                                    <button type="button" class="btn btn-sm btn-outline-secondary rounded-pill px-3" onclick="addItemRow()">
+                                                        <i class="bi bi-plus-lg me-1"></i> Add Item
+                                                    </button>
+                                                </td>
+                                            </tr>
+                                        </tfoot>
+                                    </table>
+                                </div>
+                                {{ form.items_json(id="itemsJson") }} <!-- Hidden Field -->
+                            </div>
+
+                            <div class="col-md-6 offset-md-6">
+                                <label class="form-label small fw-semibold text-secondary text-uppercase" style="letter-spacing: 0.5px;">Total Amount</label>
+                                <div class="input-group input-group-sm">
+                                    <span class="input-group-text bg-white border-light rounded-start-3">₹</span>
+                                    {{ form.total_amount(class="form-control shadow-none border-light bg-light rounded-end-3 py-2", readonly=True, id="grandTotal") }}
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-end border-top pt-4">
+                            <button type="submit" class="btn btn-primary rounded-pill px-5 fw-bold shadow-sm">Generate Estimate</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function addItemRow(itemData = null) {
+        const tbody = document.getElementById('itemsBody');
+        const row = document.createElement('tr');
+        
+        const description = itemData ? itemData.description : '';
+        const qty = itemData ? itemData.qty : '1';
+        const price = itemData ? itemData.price : '';
+        const total = itemData ? itemData.total : '';
+
+        row.innerHTML = `
+            <td><input type="text" class="form-control form-control-sm shadow-none border-white" placeholder="Item Name" value="${description}" oninput="calculateRow(this)"></td>
+            <td><input type="number" class="form-control form-control-sm shadow-none border-white" placeholder="1" value="${qty}" oninput="calculateRow(this)"></td>
+            <td><input type="number" class="form-control form-control-sm shadow-none border-white" placeholder="0.00" value="${price}" oninput="calculateRow(this)"></td>
+            <td><input type="text" class="form-control form-control-sm shadow-none border-white bg-white" placeholder="0.00" value="${total}" readonly></td>
+            <td class="text-center"><button type="button" class="btn btn-link text-danger p-0" onclick="removeRow(this)"><i class="bi bi-x-circle"></i></button></td>
+        `;
+        tbody.appendChild(row);
+        // Only sync/calc if not adding multiple, but calculateRow handles per row calc.
+        // We might want to recalc total at end of load.
+    }
+
+    function removeRow(btn) {
+        btn.closest('tr').remove();
+        calculateGrandTotal();
+        syncItems();
+    }
+
+    function calculateRow(input) {
+        const row = input.closest('tr');
+        const qty = parseFloat(row.cells[1].getElementsByTagName('input')[0].value) || 0;
+        const price = parseFloat(row.cells[2].getElementsByTagName('input')[0].value) || 0;
+        const total = qty * price;
+        row.cells[3].getElementsByTagName('input')[0].value = total.toFixed(2);
+        calculateGrandTotal();
+        syncItems();
+    }
+
+    function calculateGrandTotal() {
+        let subTotal = 0;
+        document.querySelectorAll('#itemsBody tr').forEach(row => {
+            const total = parseFloat(row.cells[3].getElementsByTagName('input')[0].value) || 0;
+            subTotal += total;
+        });
+        document.getElementById('grandTotal').value = subTotal.toFixed(2);
+    }
+
+    function syncItems() {
+        const items = [];
+        document.querySelectorAll('#itemsBody tr').forEach(row => {
+            const inputs = row.getElementsByTagName('input');
+            const item = {
+                description: inputs[0].value,
+                qty: inputs[1].value,
+                price: inputs[2].value,
+                total: inputs[3].value
+            };
+            if (item.description || item.qty || item.price) items.push(item);
+        });
+        const hiddenInput = document.querySelector('input[name="items_json"]');
+        if (hiddenInput) {
+            hiddenInput.value = JSON.stringify(items);
+        } else {
+            console.error("Hidden input 'items_json' not found!");
+            return false;
+        }
+        return true;
+    }
+    
+    // Initialize
+    window.onload = function() {
+        const itemsJson = document.getElementById('itemsJson').value;
+        if (itemsJson && itemsJson !== '[]') {
+            try {
+                const items = JSON.parse(itemsJson);
+                items.forEach(item => addItemRow(item));
+                calculateGrandTotal(); // Ensure total is correct
+            } catch (e) {
+                console.error("Error parsing items JSON", e);
+                addItemRow();
+            }
+        } else {
+            addItemRow();
+        }
+    };
+</script>
+
+<style>
+    .extra-small { font-size: 0.7rem; }
+    .rounded-top-4 { border-top-left-radius: 12px !important; border-top-right-radius: 12px !important; }
+</style>
+{% endblock %}

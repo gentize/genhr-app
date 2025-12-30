@@ -1,0 +1,136 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+        <div>
+            <h3 class="fw-bold text-dark mb-0">Purchase Orders</h3>
+            <p class="text-muted small">Manage procurement and vendor orders.</p>
+        </div>
+        <div class="d-flex gap-2">
+            <a href="{{ url_for('admin.add_purchase_order') }}" class="btn btn-sm btn-primary rounded-pill px-4 fw-semibold shadow-sm" style="background-color: #6f42c1; border-color: #6f42c1;">
+                <i class="bi bi-plus-lg me-2"></i>Create PO
+            </a>
+        </div>
+    </div>
+
+    <!-- PO List -->
+    <div class="card border-0 shadow-sm rounded-4 overflow-hidden" style="border: 1px solid #e2e8f0 !important;">
+        <div class="card-header bg-white py-3 border-0 rounded-top-4" style="border-left: 4px solid #6f42c1 !important;">
+            <div class="d-flex align-items-center justify-content-between">
+                <h6 class="m-0 fw-semibold text-dark"><i class="bi bi-cart4 me-2" style="color: #6f42c1;"></i>Order Registry</h6>
+                <img src="{{ url_for('static', filename='img/GenHR_LOGO.png') }}" alt="Gentize Logo" style="height: 25px;">
+            </div>
+        </div>
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead class="bg-light text-muted extra-small text-uppercase">
+                        <tr>
+                            <th class="ps-4 py-3">PO Number</th>
+                            <th>Vendor</th>
+                            <th>Date</th>
+                            <th>Status</th>
+                            <th>Total Amount</th>
+                            <th class="text-end pe-4">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for po in orders %}
+                        <tr>
+                            <td class="ps-4">
+                                <span class="fw-bold text-dark small">{{ po.po_number }}</span>
+                            </td>
+                            <td>
+                                <span class="text-dark small">{{ po.vendor.name }}</span>
+                            </td>
+                            <td>
+                                <span class="text-muted small">{{ po.date.strftime('%d %b %Y') }}</span>
+                            </td>
+                            <td>
+                                <div class="dropdown">
+                                    <button class="btn btn-sm badge 
+                                        {% if po.status == 'Approved' %}bg-success-subtle text-success
+                                        {% elif po.status == 'Draft' %}bg-secondary-subtle text-secondary
+                                        {% elif po.status == 'Sent' %}bg-info-subtle text-info
+                                        {% elif po.status == 'Paid' %}bg-success text-white
+                                        {% elif po.status == 'Completed' %}bg-primary-subtle text-primary
+                                        {% else %}bg-danger-subtle text-danger{% endif %} 
+                                        fw-bold extra-small border dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                        {{ po.status }}
+                                    </button>
+                                    <ul class="dropdown-menu shadow-sm border-0">
+                                        <li>
+                                            <form action="{{ url_for('admin.update_po_status', po_id=po.id, status='Draft') }}" method="POST">
+                                                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+                                                <button class="dropdown-item extra-small" type="submit">Draft</button>
+                                            </form>
+                                        </li>
+                                        <li>
+                                            <form action="{{ url_for('admin.update_po_status', po_id=po.id, status='Sent') }}" method="POST">
+                                                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+                                                <button class="dropdown-item extra-small" type="submit">Sent</button>
+                                            </form>
+                                        </li>
+                                        <li>
+                                            <form action="{{ url_for('admin.update_po_status', po_id=po.id, status='Approved') }}" method="POST">
+                                                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+                                                <button class="dropdown-item extra-small" type="submit">Approved</button>
+                                            </form>
+                                        </li>
+                                        <li>
+                                            <form action="{{ url_for('admin.update_po_status', po_id=po.id, status='Paid') }}" method="POST">
+                                                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+                                                <button class="dropdown-item extra-small fw-bold text-success" type="submit">Mark Paid</button>
+                                            </form>
+                                        </li>
+                                        <li>
+                                            <form action="{{ url_for('admin.update_po_status', po_id=po.id, status='Completed') }}" method="POST">
+                                                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+                                                <button class="dropdown-item extra-small" type="submit">Completed</button>
+                                            </form>
+                                        </li>
+                                        <li>
+                                            <form action="{{ url_for('admin.update_po_status', po_id=po.id, status='Cancelled') }}" method="POST">
+                                                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+                                                <button class="dropdown-item extra-small text-danger" type="submit">Cancelled</button>
+                                            </form>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </td>
+                            <td>
+                                <span class="fw-bold text-dark">₹{{ "%.2f"|format(po.total_amount) }}</span>
+                            </td>
+                            <td class="text-end pe-4">
+                                <div class="d-flex justify-content-end gap-2">
+                                    <a href="{{ url_for('admin.edit_purchase_order', po_id=po.id) }}" class="btn btn-sm btn-light text-secondary rounded-circle shadow-sm" title="Edit PO" style="width: 32px; height: 32px; display: flex; align-items: center; justify-content: center;">
+                                        <i class="bi bi-pencil-fill"></i>
+                                    </a>
+                                    <a href="{{ url_for('admin.print_purchase_order', po_id=po.id) }}" target="_blank" class="btn btn-sm btn-light text-secondary rounded-circle shadow-sm" title="Print PO" style="width: 32px; height: 32px; display: flex; align-items: center; justify-content: center;">
+                                        <i class="bi bi-printer-fill"></i>
+                                    </a>
+                                    <form action="{{ url_for('admin.delete_purchase_order', po_id=po.id) }}" method="POST" class="d-inline">
+                                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+                                        <button type="submit" class="btn btn-sm btn-light text-danger rounded-circle shadow-sm" title="Delete PO" onclick="return confirm('Are you sure you want to delete this Purchase Order?');" style="width: 32px; height: 32px; display: flex; align-items: center; justify-content: center;">
+                                            <i class="bi bi-trash-fill"></i>
+                                        </button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                        {% else %}
+                        <tr><td colspan="6" class="text-center py-5 text-muted">No purchase orders found.</td></tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .extra-small { font-size: 0.7rem; }
+    .rounded-top-4 { border-top-left-radius: 12px !important; border-top-right-radius: 12px !important; }
+</style>
+{% endblock %}

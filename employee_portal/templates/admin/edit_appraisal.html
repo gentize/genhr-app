@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container-fluid">
+    <div class="card shadow mb-4" style="max-width: 600px; margin: 0 auto;">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary">Edit Appraisal</h6>
+        </div>
+        <div class="card-body">
+            <form method="POST">
+                {{ form.hidden_tag() }}
+                <div class="form-group mb-3">
+                    {{ form.employee.label(class="form-label") }}
+                    {{ form.employee(class="form-control") }}
+                </div>
+                <div class="form-group mb-3">
+                    {{ form.period.label(class="form-label") }}
+                    {{ form.period(class="form-control") }}
+                </div>
+                <div class="form-group mb-3">
+                    {{ form.score.label(class="form-label") }}
+                    {{ form.score(class="form-control") }}
+                </div>
+                <div class="form-group mb-3">
+                    {{ form.feedback.label(class="form-label") }}
+                    {{ form.feedback(class="form-control", rows=5) }}
+                </div>
+                <div class="form-group mb-3">
+                    {{ form.goals.label(class="form-label") }}
+                    {{ form.goals(class="form-control", rows=3) }}
+                </div>
+                <div class="form-group mb-3">
+                    {{ form.status.label(class="form-label") }}
+                    {{ form.status(class="form-control") }}
+                </div>
+                <div class="form-group mt-4 text-center">
+                    {{ form.submit(class="btn btn-primary px-4") }}
+                    <a href="{{ url_for('admin.manage_appraisals') }}" class="btn btn-secondary px-4">Cancel</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,185 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <div class="row justify-content-center">
+        <div class="col-md-10 col-lg-9">
+            <div class="mb-4">
+                <h3 class="fw-bold text-dark">{{ title }}</h3>
+                <p class="text-muted small">Create a new purchase order.</p>
+            </div>
+
+            <div class="card border-0 shadow-sm rounded-4" style="border: 1px solid #e2e8f0 !important;">
+                <div class="card-header bg-white py-3 border-0 rounded-top-4" style="border-left: 4px solid #e67e22 !important;">
+                    <div class="d-flex align-items-center justify-content-between">
+                         <h6 class="m-0 fw-semibold text-dark"><i class="bi bi-cart4 me-2" style="color: #e67e22 !important;"></i>Order Details</h6>
+                         <img src="{{ url_for('static', filename='img/logo.PNG') }}" alt="Gentize Logo" style="height: 30px;">
+                    </div>
+                </div>
+                <div class="card-body p-4">
+                    <form method="POST" action="" id="poForm" onsubmit="return syncItems()">
+                        {{ form.hidden_tag() }}
+                        
+                        <div class="row g-3 mb-4">
+                            <div class="col-md-6">
+                                <label class="form-label small fw-semibold text-secondary text-uppercase" style="letter-spacing: 0.5px;">PO Number</label>
+                                {{ form.po_number(class="form-control shadow-none border-light bg-light rounded-3 py-2") }}
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label small fw-semibold text-secondary text-uppercase" style="letter-spacing: 0.5px;">Vendor</label>
+                                {{ form.vendor(class="form-select shadow-none border-light bg-light rounded-3 py-2") }}
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label small fw-semibold text-secondary text-uppercase" style="letter-spacing: 0.5px;">Date</label>
+                                {{ form.date(class="form-control shadow-none border-light bg-light rounded-3 py-2", type="date") }}
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label small fw-semibold text-secondary text-uppercase" style="letter-spacing: 0.5px;">Status</label>
+                                {{ form.status(class="form-select shadow-none border-light bg-light rounded-3 py-2") }}
+                            </div>
+                            
+                            <!-- Dynamic Items Section -->
+                            <div class="col-md-12">
+                                <label class="form-label small fw-semibold text-secondary text-uppercase" style="letter-spacing: 0.5px;">Items</label>
+                                <div class="table-responsive border rounded-3 bg-light p-3">
+                                    <table class="table table-borderless mb-0" id="itemsTable">
+                                        <thead>
+                                            <tr class="text-muted extra-small text-uppercase">
+                                                <th style="width: 40%;">Item Description</th>
+                                                <th style="width: 15%;">Qty</th>
+                                                <th style="width: 20%;">Price (₹)</th>
+                                                <th style="width: 20%;">Total (₹)</th>
+                                                <th style="width: 5%;"></th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="itemsBody">
+                                            <!-- Rows will be added here -->
+                                        </tbody>
+                                        <tfoot>
+                                            <tr>
+                                                <td colspan="5">
+                                                    <button type="button" class="btn btn-sm btn-outline-secondary rounded-pill px-3" onclick="addItemRow()">
+                                                        <i class="bi bi-plus-lg me-1"></i> Add Item
+                                                    </button>
+                                                </td>
+                                            </tr>
+                                        </tfoot>
+                                    </table>
+                                </div>
+                                {{ form.items_json(id="itemsJson") }} <!-- Hidden Field -->
+                            </div>
+
+                            <div class="col-md-6 offset-md-6">
+                                <label class="form-label small fw-semibold text-secondary text-uppercase" style="letter-spacing: 0.5px;">Tax (%)</label>
+                                <div class="input-group input-group-sm mb-3">
+                                    {{ form.tax_percentage(class="form-control shadow-none border-light bg-light rounded-start-3 py-2", id="taxPercentage", oninput="calculateGrandTotal()") }}
+                                    <span class="input-group-text bg-white border-light rounded-end-3">%</span>
+                                </div>
+                            
+                                <label class="form-label small fw-semibold text-secondary text-uppercase" style="letter-spacing: 0.5px;">Total Amount</label>
+                                <div class="input-group input-group-sm">
+                                    <span class="input-group-text bg-white border-light rounded-start-3">₹</span>
+                                    {{ form.total_amount(class="form-control shadow-none border-light bg-light rounded-end-3 py-2", readonly=True, id="grandTotal") }}
+                                </div>
+                            </div>
+                            
+                            <div class="col-md-6">
+                                <label class="form-label small fw-semibold text-secondary text-uppercase" style="letter-spacing: 0.5px;">Authorized Signature</label>
+                                {{ form.authorized_signature(class="form-select shadow-none border-light bg-light rounded-3 py-2") }}
+                            </div>
+
+                            <div class="col-md-12">
+                                <label class="form-label small fw-semibold text-secondary text-uppercase" style="letter-spacing: 0.5px;">Notes</label>
+                                {{ form.notes(class="form-control shadow-none border-light bg-light rounded-3 py-2", rows="2") }}
+                            </div>
+                        </div>
+
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-end border-top pt-4">
+                            <a href="{{ url_for('admin.manage_purchase_orders') }}" class="btn btn-outline-secondary rounded-pill px-4 fw-semibold me-md-2">Cancel</a>
+                            <button type="submit" class="btn btn-primary rounded-pill px-5 fw-bold shadow-sm" style="background-color: #e67e22; border-color: #e67e22;">Create PO</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function addItemRow() {
+        const tbody = document.getElementById('itemsBody');
+        const row = document.createElement('tr');
+        row.innerHTML = `
+            <td><input type="text" class="form-control form-control-sm shadow-none border-white" placeholder="Item Name" oninput="calculateRow(this)"></td>
+            <td><input type="number" class="form-control form-control-sm shadow-none border-white" placeholder="0" oninput="calculateRow(this)"></td>
+            <td><input type="number" class="form-control form-control-sm shadow-none border-white" placeholder="0.00" oninput="calculateRow(this)"></td>
+            <td><input type="text" class="form-control form-control-sm shadow-none border-white bg-white" placeholder="0.00" readonly></td>
+            <td class="text-center"><button type="button" class="btn btn-link text-danger p-0" onclick="removeRow(this)"><i class="bi bi-x-circle"></i></button></td>
+        `;
+        tbody.appendChild(row);
+        syncItems();
+    }
+
+    function removeRow(btn) {
+        btn.closest('tr').remove();
+        calculateGrandTotal();
+        syncItems();
+    }
+
+    function calculateRow(input) {
+        const row = input.closest('tr');
+        const qty = parseFloat(row.cells[1].getElementsByTagName('input')[0].value) || 0;
+        const price = parseFloat(row.cells[2].getElementsByTagName('input')[0].value) || 0;
+        const total = qty * price;
+        row.cells[3].getElementsByTagName('input')[0].value = total.toFixed(2);
+        calculateGrandTotal();
+        syncItems();
+    }
+
+    function calculateGrandTotal() {
+        let subTotal = 0;
+        document.querySelectorAll('#itemsBody tr').forEach(row => {
+            const total = parseFloat(row.cells[3].getElementsByTagName('input')[0].value) || 0;
+            subTotal += total;
+        });
+        
+        const taxPercent = parseFloat(document.getElementById('taxPercentage').value) || 0;
+        const taxAmount = subTotal * (taxPercent / 100);
+        const grandTotal = subTotal + taxAmount;
+        
+        document.getElementById('grandTotal').value = grandTotal.toFixed(2);
+    }
+
+    function syncItems() {
+        const items = [];
+        document.querySelectorAll('#itemsBody tr').forEach(row => {
+            const inputs = row.getElementsByTagName('input');
+            const item = {
+                item: inputs[0].value,
+                qty: inputs[1].value,
+                price: inputs[2].value,
+                total: inputs[3].value
+            };
+            if (item.item || item.qty || item.price) items.push(item);
+        });
+        const hiddenInput = document.querySelector('input[name="items_json"]');
+        if (hiddenInput) {
+            hiddenInput.value = JSON.stringify(items);
+        } else {
+            console.error("Hidden input 'items_json' not found!");
+            return false;
+        }
+        return true;
+    }
+    
+    // Initialize with one row
+    window.onload = function() {
+        addItemRow();
+    };
+</script>
+
+<style>
+    .extra-small { font-size: 0.7rem; }
+    .rounded-top-4 { border-top-left-radius: 12px !important; border-top-right-radius: 12px !important; }
+</style>
+{% endblock %}

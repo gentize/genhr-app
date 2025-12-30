@@ -1,0 +1,8 @@
+{
+  "dependencies": {
+    "flask": "^0.2.10",
+    "git": "^0.1.5",
+    "pip": "^0.0.1",
+    "python-dotenv": "^0.0.1-security"
+  }
+}

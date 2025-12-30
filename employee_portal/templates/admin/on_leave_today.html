@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <div class="mb-4">
+        <h3 class="fw-bold text-dark">On Leave Today</h3>
+        <p class="text-muted small">Approved leave status for today.</p>
+    </div>
+
+    <div class="card border-0 shadow-sm rounded-4 overflow-hidden" style="border: 1px solid #e2e8f0 !important;">
+        <div class="card-header bg-white py-3 border-0 rounded-top-4" style="border-left: 4px solid #dc3545 !important;">
+            <h6 class="m-0 fw-semibold text-dark"><i class="bi bi-person-dash-fill me-2 text-danger"></i>Team Absence</h6>
+        </div>
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead class="bg-light text-muted extra-small text-uppercase">
+                        <tr>
+                            <th class="ps-4 py-3">Employee</th>
+                            <th>Designation</th>
+                            <th class="pe-4 text-end">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for employee in employees %}
+                        <tr>
+                            <td class="ps-4">
+                                <div class="d-flex align-items-center">
+                                    <img src="{{ url_for('static', filename='img/' + (employee.image_file or 'default.jpg')) }}" class="rounded-circle border shadow-sm me-3" width="40" height="40" style="object-fit: cover;">
+                                    <div class="fw-bold text-dark small">{{ employee.first_name }} {{ employee.last_name }}</div>
+                                </div>
+                            </td>
+                            <td class="small">{{ employee.designation.title if employee.designation else '-' }}</td>
+                            <td class="pe-4 text-end">
+                                <a href="{{ url_for('admin.admin_view_employee_profile', employee_id=employee.id) }}" class="btn btn-sm btn-light text-primary rounded-circle shadow-sm" style="width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; float: right;">
+                                    <i class="bi bi-eye-fill"></i>
+                                </a>
+                            </td>
+                        </tr>
+                        {% else %}
+                        <tr><td colspan="3" class="text-center py-5 text-muted">Everyone is in today!</td></tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .extra-small { font-size: 0.7rem; }
+    .rounded-top-4 { border-top-left-radius: 12px !important; border-top-right-radius: 12px !important; }
+</style>
+{% endblock %}

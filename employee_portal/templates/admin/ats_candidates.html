@@ -1,0 +1,110 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <div class="row">
+        <!-- Add Candidate Column -->
+        <div class="col-md-4 mb-4">
+            <div class="mb-4">
+                <h3 class="fw-bold text-dark">Candidates</h3>
+                <p class="text-muted small">Manage applicants and interviews.</p>
+            </div>
+
+            <div class="card border-0 shadow-sm rounded-4" style="border: 1px solid #e2e8f0 !important;">
+                <div class="card-header bg-white py-3 border-0 rounded-top-4" style="border-left: 4px solid #e67e22 !important;">
+                    <h6 class="m-0 fw-semibold text-dark"><i class="bi bi-person-plus me-2 text-primary"></i>Add Applicant</h6>
+                </div>
+                <div class="card-body p-4">
+                    <form method="POST" action="">
+                        {{ form.hidden_tag() }}
+                        <div class="row g-2 mb-3">
+                            <div class="col-md-6">
+                                <label class="form-label small fw-semibold text-secondary text-uppercase" style="letter-spacing: 0.5px;">First Name</label>
+                                {{ form.first_name(class="form-control shadow-none border-light bg-light rounded-3 py-2") }}
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label small fw-semibold text-secondary text-uppercase" style="letter-spacing: 0.5px;">Last Name</label>
+                                {{ form.last_name(class="form-control shadow-none border-light bg-light rounded-3 py-2") }}
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label small fw-semibold text-secondary text-uppercase" style="letter-spacing: 0.5px;">Email</label>
+                            {{ form.email(class="form-control shadow-none border-light bg-light rounded-3 py-2") }}
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label small fw-semibold text-secondary text-uppercase" style="letter-spacing: 0.5px;">Phone</label>
+                            {{ form.phone(class="form-control shadow-none border-light bg-light rounded-3 py-2") }}
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label small fw-semibold text-secondary text-uppercase" style="letter-spacing: 0.5px;">Job Position</label>
+                            {{ form.job_opening(class="form-select shadow-none border-light bg-light rounded-3 py-2") }}
+                        </div>
+                        <div class="mb-4">
+                            <label class="form-label small fw-semibold text-secondary text-uppercase" style="letter-spacing: 0.5px;">Initial Status</label>
+                            {{ form.status(class="form-select shadow-none border-light bg-light rounded-3 py-2") }}
+                        </div>
+                        <div class="d-grid pt-2">
+                            <button type="submit" class="btn btn-primary rounded-pill py-2 fw-semibold shadow-sm">
+                                <i class="bi bi-save me-2"></i>Register Candidate
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- List Candidates Column -->
+        <div class="col-md-8">
+            <div class="card border-0 shadow-sm rounded-4" style="border: 1px solid #e2e8f0 !important;">
+                <div class="card-header bg-white py-3 border-0 rounded-top-4" style="border-left: 4px solid #e67e22 !important;">
+                    <h6 class="m-0 fw-semibold text-dark"><i class="bi bi-people-fill me-2 text-primary"></i>Application Tracking</h6>
+                </div>
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle mb-0">
+                            <thead class="bg-light text-muted extra-small text-uppercase">
+                                <tr>
+                                    <th class="ps-4">Candidate</th>
+                                    <th>Applied For</th>
+                                    <th>Status</th>
+                                    <th>Date</th>
+                                    <th class="pe-4 text-end">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for cand in candidates %}
+                                <tr>
+                                    <td class="ps-4">
+                                        <div class="fw-bold text-dark small">{{ cand.first_name }} {{ cand.last_name }}</div>
+                                        <div class="extra-small text-muted">{{ cand.email }}</div>
+                                    </td>
+                                    <td class="small">{{ cand.job_opening.title if cand.job_opening else '-' }}</td>
+                                    <td>
+                                        <span class="text-{% if cand.status == 'Hired' %}success{% elif cand.status == 'Rejected' %}danger{% else %}info{% endif %} fw-semibold extra-small">
+                                            {{ cand.status }}
+                                        </span>
+                                    </td>
+                                    <td class="small text-muted">{{ cand.applied_date.strftime('%d %b %y') }}</td>
+                                    <td class="pe-4 text-end">
+                                        <a href="{{ url_for('admin.edit_candidate', cand_id=cand.id) }}" class="btn btn-sm btn-light text-primary rounded-circle shadow-sm" style="width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; float: right;">
+                                            <i class="bi bi-pencil-fill"></i>
+                                        </a>
+                                    </td>
+                                </tr>
+                                {% else %}
+                                <tr><td colspan="5" class="text-center py-5 text-muted">No applicants yet.</td></tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .extra-small { font-size: 0.7rem; }
+    .rounded-top-4 { border-top-left-radius: 12px !important; border-top-right-radius: 12px !important; }
+</style>
+{% endblock %}

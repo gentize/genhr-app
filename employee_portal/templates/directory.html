@@ -1,0 +1,89 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="fw-bold text-primary mb-1">Employee Directory</h2>
+            <p class="text-muted mb-0">Search for colleagues.</p>
+        </div>
+    </div>
+
+    <!-- Search -->
+    <div class="card border-0 shadow-sm rounded-4 mb-4">
+        <div class="card-body p-2">
+            <form action="{{ url_for('main.directory') }}" method="GET">
+                <div class="input-group">
+                    <span class="input-group-text bg-transparent border-0 ps-3"><i class="bi bi-search text-muted"></i></span>
+                    <input type="text" name="search_query" id="directorySearchInput" class="form-control border-0 shadow-none ps-2" placeholder="Search by name or ID..." value="{{ search_query }}" list="directory-suggestions" autocomplete="off">
+                    {% if search_query %}
+                    <a href="{{ url_for('main.directory') }}" class="btn btn-link text-muted text-decoration-none">
+                        <i class="bi bi-x-circle-fill"></i>
+                    </a>
+                    {% endif %}
+                    <button type="submit" class="btn btn-primary rounded-pill px-4 m-1">Search</button>
+                </div>
+                <datalist id="directory-suggestions"></datalist>
+            </form>
+        </div>
+    </div>
+
+    <!-- List -->
+    <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="bg-light text-muted small text-uppercase">
+                    <tr>
+                        <th class="ps-4 py-3">Employee</th>
+                        <th>ID</th>
+                        <th>Designation</th>
+                        <th>Contact</th>
+                        <th class="text-end pe-4">Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for employee in employees %}
+                    <tr>
+                        <td class="ps-4 py-3">
+                            <div class="d-flex align-items-center">
+                                <img src="{{ url_for('static', filename='img/' + (employee.image_file or 'default.jpg')) }}" class="rounded-circle border shadow-sm me-3" width="40" height="40" style="object-fit: cover;">
+                                <h6 class="mb-0 fw-bold text-dark">{{ employee.first_name }} {{ employee.last_name }}</h6>
+                            </div>
+                        </td>
+                        <td>
+                            <span class="badge bg-light text-dark border font-monospace">{{ employee.user.employeeid }}</span>
+                        </td>
+                        <td>{{ employee.designation.title if employee.designation else '-' }}</td>
+                        <td>{{ employee.email }}</td>
+                        <td class="text-end pe-4">
+                            <a href="{{ url_for('main.view_colleague', profile_id=employee.id) }}" class="btn btn-sm btn-outline-primary rounded-pill px-3">View Profile</a>
+                        </td>
+                    </tr>
+                    {% else %}
+                    <tr><td colspan="5" class="text-center py-5 text-muted">No employees found.</td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<script>
+document.getElementById('directorySearchInput').addEventListener('input', function() {
+    let query = this.value;
+    if (query.length < 2) return;
+    
+    fetch(`{{ url_for('main.search_colleagues_api') }}?q=${query}`)
+        .then(response => response.json())
+        .then(data => {
+            let dataList = document.getElementById('directory-suggestions');
+            dataList.innerHTML = '';
+            data.forEach(name => {
+                let option = document.createElement('option');
+                option.value = name;
+                dataList.appendChild(option);
+            });
+        });
+});
+</script>
+{% endblock %}

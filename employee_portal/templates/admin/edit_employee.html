@@ -1,0 +1,284 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <div class="row justify-content-center">
+        <div class="col-12 col-xl-10">
+            <h2 class="text-center mb-5" style="font-family: 'Poppins', serif; font-weight: 300; font-size: 2.5rem; letter-spacing: 1px;">
+                Edit Employee Profile
+            </h2>
+
+            <form method="POST" action="" enctype="multipart/form-data">
+                {{ form.hidden_tag() }}
+
+                <!-- Credentials -->
+                <div class="card shadow-sm mb-4">
+                    <div class="card-header bg-white py-3">
+                        <h5 class="mb-0 text-primary"><i class="bi bi-shield-lock me-2"></i>Account & Credentials</h5>
+                    </div>
+                    <div class="card-body p-4">
+                         <div class="row g-3">
+                            <div class="col-md-6">
+                                {{ form.employeeid.label(class="form-label") }}
+                                {{ form.employeeid(class="form-control" + (" is-invalid" if form.employeeid.errors else "")) }}
+                                {% for error in form.employeeid.errors %}
+                                    <div class="invalid-feedback">{{ error }}</div>
+                                {% endfor %}
+                            </div>
+                            <div class="col-md-6">
+                                {{ form.email.label(class="form-label") }}
+                                {{ form.email(class="form-control" + (" is-invalid" if form.email.errors else "")) }}
+                                {% for error in form.email.errors %}
+                                    <div class="invalid-feedback">{{ error }}</div>
+                                {% endfor %}
+                            </div>
+                            <div class="col-md-6">
+                                {{ form.password.label(class="form-label") }}
+                                {{ form.password(class="form-control" + (" is-invalid" if form.password.errors else ""), placeholder="Leave blank to keep current") }}
+                                {% for error in form.password.errors %}
+                                    <div class="invalid-feedback">{{ error }}</div>
+                                {% endfor %}
+                            </div>
+                            <div class="col-md-6">
+                                {{ form.password2.label(class="form-label") }}
+                                {{ form.password2(class="form-control" + (" is-invalid" if form.password2.errors else "")) }}
+                                {% for error in form.password2.errors %}
+                                    <div class="invalid-feedback">{{ error }}</div>
+                                {% endfor %}
+                            </div>
+                         </div>
+                    </div>
+                </div>
+
+                <!-- Personal Information -->
+                <div class="card shadow-sm mb-4">
+                    <div class="card-header bg-white py-3">
+                        <h5 class="mb-0 text-primary"><i class="bi bi-person-badge me-2"></i>Personal Information</h5>
+                    </div>
+                    <div class="card-body p-4">
+                        <div class="row g-3">
+                            <div class="col-md-2">
+                                {{ form.prefix.label(class="form-label") }}
+                                {{ form.prefix(class="form-select" + (" is-invalid" if form.prefix.errors else "")) }}
+                            </div>
+                            <div class="col-md-5">
+                                {{ form.first_name.label(class="form-label") }}
+                                {{ form.first_name(class="form-control" + (" is-invalid" if form.first_name.errors else "")) }}
+                            </div>
+                            <div class="col-md-5">
+                                {{ form.last_name.label(class="form-label") }}
+                                {{ form.last_name(class="form-control" + (" is-invalid" if form.last_name.errors else "")) }}
+                            </div>
+
+                            <div class="col-md-4">
+                                {{ form.date_of_birth.label(class="form-label") }}
+                                {{ form.date_of_birth(class="form-control" + (" is-invalid" if form.date_of_birth.errors else ""), type="date") }}
+                            </div>
+                            <div class="col-md-4">
+                                {{ form.gender.label(class="form-label") }}
+                                {{ form.gender(class="form-select" + (" is-invalid" if form.gender.errors else "")) }}
+                            </div>
+                            <div class="col-md-4">
+                                {{ form.marital_status.label(class="form-label") }}
+                                {{ form.marital_status(class="form-select" + (" is-invalid" if form.marital_status.errors else "")) }}
+                            </div>
+
+                            <div class="col-12">
+                                {{ form.address.label(class="form-label") }}
+                                {{ form.address(class="form-control" + (" is-invalid" if form.address.errors else "")) }}
+                            </div>
+                            <div class="col-md-6">
+                                {{ form.phone_number.label(class="form-label") }}
+                                {{ form.phone_number(class="form-control" + (" is-invalid" if form.phone_number.errors else "")) }}
+                            </div>
+
+                            <div class="col-md-4">
+                                {{ form.pan_number.label(class="form-label") }}
+                                {{ form.pan_number(class="form-control" + (" is-invalid" if form.pan_number.errors else "")) }}
+                            </div>
+                            <div class="col-md-4">
+                                {{ form.aadhar_number.label(class="form-label") }}
+                                {{ form.aadhar_number(class="form-control" + (" is-invalid" if form.aadhar_number.errors else "")) }}
+                            </div>
+                            <div class="col-md-4">
+                                {{ form.uan_number.label(class="form-label") }}
+                                {{ form.uan_number(class="form-control" + (" is-invalid" if form.uan_number.errors else "")) }}
+                            </div>
+                            <div class="col-md-6">
+                                {{ form.pf_number.label(class="form-label") }}
+                                {{ form.pf_number(class="form-control") }}
+                            </div>
+                            <div class="col-md-6">
+                                {{ form.esi_number.label(class="form-label") }}
+                                {{ form.esi_number(class="form-control") }}
+                            </div>
+                            
+                            <div class="col-md-12">
+                                {{ form.emergency_contact.label(class="form-label") }}
+                                {{ form.emergency_contact(class="form-control" + (" is-invalid" if form.emergency_contact.errors else "")) }}
+                            </div>
+
+                             <!-- Banking -->
+                            <div class="col-12 mt-4">
+                                <h6 class="text-secondary border-bottom pb-2">Bank Details</h6>
+                            </div>
+                             <div class="col-md-6">
+                                {{ form.bank_account_number.label(class="form-label") }}
+                                {{ form.bank_account_number(class="form-control" + (" is-invalid" if form.bank_account_number.errors else "")) }}
+                            </div>
+                             <div class="col-md-6">
+                                {{ form.bank_name.label(class="form-label") }}
+                                {{ form.bank_name(class="form-control" + (" is-invalid" if form.bank_name.errors else "")) }}
+                            </div>
+                             <div class="col-md-6">
+                                {{ form.ifsc_code.label(class="form-label") }}
+                                {{ form.ifsc_code(class="form-control" + (" is-invalid" if form.ifsc_code.errors else "")) }}
+                            </div>
+                             <div class="col-md-6">
+                                {{ form.branch.label(class="form-label") }}
+                                {{ form.branch(class="form-control" + (" is-invalid" if form.branch.errors else "")) }}
+                            </div>
+                            
+                             <div class="col-12 mt-4">
+                                <h6 class="text-secondary border-bottom pb-2">Profile Picture</h6>
+                            </div>
+                            <div class="col-md-12">
+                                {% if employee_profile.image_file %}
+                                    <div class="mb-2">
+                                        <img src="{{ url_for('static', filename='img/' + employee_profile.image_file) }}" alt="Current Profile" class="img-thumbnail" style="height: 100px;">
+                                    </div>
+                                {% endif %}
+                                {{ form.picture(class="form-control") }}
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Job Information -->
+                <div class="card shadow-sm mb-4">
+                    <div class="card-header bg-white py-3">
+                        <h5 class="mb-0 text-primary"><i class="bi bi-briefcase me-2"></i>Job Information</h5>
+                    </div>
+                    <div class="card-body p-4">
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                {{ form.designation.label(class="form-label") }}
+                                {{ form.designation(class="form-select" + (" is-invalid" if form.designation.errors else "")) }}
+                            </div>
+                            <div class="col-md-6">
+                                {{ form.reports_to.label(class="form-label") }}
+                                {{ form.reports_to(class="form-control" + (" is-invalid" if form.reports_to.errors else "")) }}
+                            </div>
+                            
+                            <div class="col-md-6">
+                                {{ form.previous_employer.label(class="form-label") }}
+                                {{ form.previous_employer(class="form-control" + (" is-invalid" if form.previous_employer.errors else "")) }}
+                            </div>
+                             <div class="col-md-6">
+                                {{ form.years_of_experience.label(class="form-label") }}
+                                {{ form.years_of_experience(class="form-control" + (" is-invalid" if form.years_of_experience.errors else "")) }}
+                            </div>
+                            
+                            <div class="col-md-6">
+                                {{ form.employment_type.label(class="form-label") }}
+                                {{ form.employment_type(class="form-select" + (" is-invalid" if form.employment_type.errors else "")) }}
+                            </div>
+                            
+                            <div class="col-md-6">
+                                {{ form.date_of_joining.label(class="form-label") }}
+                                {{ form.date_of_joining(class="form-control" + (" is-invalid" if form.date_of_joining.errors else ""), type="date") }}
+                            </div>
+
+                            <!-- Employment Status -->
+                            <div class="col-12 mt-4">
+                                <h6 class="text-secondary border-bottom pb-2">Employment Status</h6>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-check form-switch mt-2">
+                                    {{ form.is_resigned(class="form-check-input", id="resignedCheck") }}
+                                    <label class="form-check-label fw-bold" for="resignedCheck">Resigned?</label>
+                                </div>
+                            </div>
+                            <div class="col-md-4" id="noticePeriodGroup" style="display: none;">
+                                {{ form.notice_period.label(class="form-label") }}
+                                {{ form.notice_period(class="form-select", id="noticePeriodSelect") }}
+                            </div>
+                            <div class="col-md-4" id="resignedDateGroup" style="display: none;">
+                                <label class="form-label">Date of Leaving</label>
+                                {{ form.resigned_date(class="form-control", type="date", id="leavingDateInput") }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="d-grid gap-2 d-md-flex justify-content-md-end mb-5">
+                    <a href="{{ url_for('admin.view_employees') }}" class="btn btn-outline-secondary me-md-2">Cancel</a>
+                    {{ form.submit(class="btn btn-primary px-5") }}
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    $(document).ready(function() {
+        console.log("Resignation script initialized");
+
+        // Initialize Select2
+        if ($('#reports_to').length) {
+            $('#reports_to').select2({
+                placeholder: "-- Select Manager --",
+                allowClear: true,
+                width: '100%'
+            });
+        }
+
+        const $resignedCheck = $('#resignedCheck');
+        const $noticeGroup = $('#noticePeriodGroup');
+        const $dateGroup = $('#resignedDateGroup');
+        const $noticeSelect = $('#noticePeriodSelect');
+        const $leavingInput = $('#leavingDateInput');
+        
+        function calculateLeavingDate(months) {
+            if (!months || isNaN(months)) return '';
+            const now = new Date();
+            const leavingDate = new Date(now.getFullYear(), now.getMonth() + parseInt(months), now.getDate());
+            
+            const year = leavingDate.getFullYear();
+            const month = String(leavingDate.getMonth() + 1).padStart(2, '0');
+            const day = String(leavingDate.getDate()).padStart(2, '0');
+            return `${year}-${month}-${day}`;
+        }
+
+        function updateVisibility() {
+            const isChecked = $resignedCheck.prop('checked');
+            console.log("Resigned toggle status:", isChecked);
+            if (isChecked) {
+                $noticeGroup.show();
+                $dateGroup.show();
+            } else {
+                $noticeGroup.hide();
+                $dateGroup.hide();
+            }
+        }
+        
+        $resignedCheck.on('change', function() {
+            updateVisibility();
+        });
+        
+        $noticeSelect.on('change', function() {
+            const months = $(this).val();
+            if (months) {
+                const dateStr = calculateLeavingDate(months);
+                $leavingInput.val(dateStr);
+            }
+        });
+
+        // Run once on load to set initial state
+        updateVisibility();
+    });
+</script>
+{% endblock %}

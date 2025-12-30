@@ -1,0 +1,161 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <div class="mb-4">
+        <h3 class="fw-bold text-dark">Salary Structure</h3>
+        <p class="text-muted small">Define and manage monthly CTC components.</p>
+    </div>
+
+    <div class="row">
+        <!-- Add Structure Column -->
+        <div class="col-md-4 mb-4">
+            <div class="card border-0 shadow-sm rounded-4" style="border: 1px solid #e2e8f0 !important;">
+                <div class="card-header bg-white py-3 border-0 rounded-top-4" style="border-left: 4px solid #e67e22 !important;">
+                    <h6 class="m-0 fw-semibold text-dark"><i class="bi bi-gear-fill me-2 text-primary"></i>Configure Structure</h6>
+                </div>
+                <div class="card-body p-4">
+                    <form method="POST" action="">
+                        {{ form.hidden_tag() }}
+                        
+                        <div class="mb-3">
+                            <label class="form-label small fw-semibold text-secondary text-uppercase" style="letter-spacing: 0.5px;">Employee</label>
+                            {{ form.employee(class="form-select shadow-none border-light bg-light rounded-3 py-2") }}
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label small fw-semibold text-secondary text-uppercase" style="letter-spacing: 0.5px;">Monthly CTC</label>
+                            {{ form.monthly_ctc(class="form-control shadow-none border-light bg-light rounded-3 py-2", id="inputCTC", placeholder="Enter Amount") }}
+                            <small class="text-muted extra-small">Tab out to auto-calculate breakdown</small>
+                        </div>
+
+                        <!-- Condensed Breakdown Section -->
+                        <div class="p-3 bg-light rounded-4 mb-3 border border-white">
+                            <div class="row g-2">
+                                <div class="col-6">
+                                    <label class="extra-small text-muted fw-bold">Basic</label>
+                                    {{ form.basic(class="form-control form-control-sm border-0 bg-white shadow-none rounded-2", id="calcBasic") }}
+                                </div>
+                                <div class="col-6">
+                                    <label class="extra-small text-muted fw-bold">HRA</label>
+                                    {{ form.hra(class="form-control form-control-sm border-0 bg-white shadow-none rounded-2", id="calcHRA") }}
+                                </div>
+                                <div class="col-4">
+                                    <label class="extra-small text-muted fw-bold">Conv.</label>
+                                    {{ form.conveyance(class="form-control form-control-sm border-0 bg-white shadow-none rounded-2", id="calcConv") }}
+                                </div>
+                                <div class="col-4">
+                                    <label class="extra-small text-muted fw-bold">PF</label>
+                                    {{ form.pf(class="form-control form-control-sm border-0 bg-white shadow-none rounded-2", id="calcPF") }}
+                                </div>
+                                <div class="col-4">
+                                    <label class="extra-small text-muted fw-bold">PT</label>
+                                    {{ form.professional_tax(class="form-control form-control-sm border-0 bg-white shadow-none rounded-2", id="calcPT") }}
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="d-grid pt-2">
+                            <button type="submit" class="btn btn-primary rounded-pill py-2 fw-semibold shadow-sm">
+                                <i class="bi bi-check2-circle me-2"></i>Update Record
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Master List Column -->
+        <div class="col-md-8">
+            <div class="card border-0 shadow-sm rounded-4" style="border: 1px solid #e2e8f0 !important;">
+                <div class="card-header bg-white py-3 border-0 rounded-top-4" style="border-left: 4px solid #e67e22 !important;">
+                    <h6 class="m-0 fw-semibold text-dark"><i class="bi bi-cash-stack me-2 text-primary"></i>Active Master Records</h6>
+                </div>
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle mb-0">
+                            <thead class="bg-light text-muted extra-small text-uppercase">
+                                <tr>
+                                    <th class="ps-4">Employee</th>
+                                    <th>CTC</th>
+                                    <th>Gross Pay</th>
+                                    <th class="pe-4 text-end">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for s in structures %}
+                                <tr>
+                                    <td class="ps-4 fw-bold text-dark">
+                                        {{ s.employee.first_name }}
+                                        <div class="extra-small text-muted fw-normal">{{ s.employee.user.employeeid }}</div>
+                                    </td>
+                                    <td class="fw-bold">₹{{ "{:,.2f}".format(s.monthly_ctc) }}</td>
+                                    <td class="small text-muted">₹{{ "{:,.2f}".format(s.basic + s.hra + s.conveyance + s.medical + s.special_allowance) }}</td>
+                                    <td class="pe-4 text-end">
+                                        <div class="d-flex justify-content-end gap-2">
+                                            <button class="btn btn-sm btn-light text-primary rounded-circle shadow-sm edit-structure-btn" 
+                                                    data-id="{{ s.employee_id }}" data-ctc="{{ s.monthly_ctc }}" data-basic="{{ s.basic }}"
+                                                    data-hra="{{ s.hra }}" data-conv="{{ s.conveyance }}" data-med="{{ s.medical }}"
+                                                    data-spec="{{ s.special_allowance }}" data-pf="{{ s.pf }}" data-esi="{{ s.esi }}"
+                                                    data-pt="{{ s.professional_tax }}" title="Edit" style="width: 32px; height: 32px; display: flex; align-items: center; justify-content: center;">
+                                                <i class="bi bi-pencil-fill"></i>
+                                            </button>
+                                            <form action="{{ url_for('admin.delete_salary_structure', structure_id=s.id) }}" method="POST">
+                                                <button type="submit" class="btn btn-sm btn-light text-danger rounded-circle shadow-sm" onclick="return confirm('Delete record?');" style="width: 32px; height: 32px; display: flex; align-items: center; justify-content: center;">
+                                                    <i class="bi bi-trash-fill"></i>
+                                                </button>
+                                            </form>
+                                        </div>
+                                    </td>
+                                </tr>
+                                {% else %}
+                                <tr><td colspan="4" class="text-center py-5 text-muted">No structures defined.</td></tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.getElementById('inputCTC').addEventListener('blur', function() {
+    const ctc = parseFloat(this.value);
+    if (isNaN(ctc) || ctc <= 0) return;
+    const basic = Math.round(ctc * 0.50);
+    const hra = Math.round(basic * 0.40);
+    const conv = 1600; 
+    const med = 1250;  
+    const pf = Math.round(basic * 0.12); 
+    const esi = (ctc <= 21000) ? Math.round(ctc * 0.0075) : 0;
+    const pt = (ctc >= 15000) ? 200 : 0;
+    const special = Math.max(0, ctc - (basic + hra + conv + med));
+    document.getElementById('calcBasic').value = basic;
+    document.getElementById('calcHRA').value = hra;
+    document.getElementById('calcConv').value = conv;
+    document.getElementById('calcPF').value = pf;
+    document.getElementById('calcPT').value = pt;
+});
+
+document.querySelectorAll('.edit-structure-btn').forEach(btn => {
+    btn.addEventListener('click', function() {
+        const data = this.dataset;
+        document.querySelector('select[name="employee"]').value = data.id;
+        document.getElementById('inputCTC').value = data.ctc;
+        document.getElementById('calcBasic').value = data.basic;
+        document.getElementById('calcHRA').value = data.hra;
+        document.getElementById('calcConv').value = data.conv;
+        document.getElementById('calcPF').value = data.pf;
+        document.getElementById('calcPT').value = data.pt;
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+});
+</script>
+
+<style>
+    .extra-small { font-size: 0.65rem; }
+    .rounded-top-4 { border-top-left-radius: 12px !important; border-top-right-radius: 12px !important; }
+</style>
+{% endblock %}

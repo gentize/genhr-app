@@ -1,0 +1,490 @@
+<ul class="nav flex-column">
+    {% if current_user.profile %}
+    <li class="nav-item">
+        <a class="nav-link text-white" href="{{ url_for('main.profile') }}">
+            <i class="bi bi-person me-2"></i>My Profile
+        </a>
+    </li>
+    {% if current_user.role != 'director' and current_user.role != 'admin' %}
+    <li class="nav-item">
+        <a class="nav-link text-white" href="{{ url_for('main.my_appraisals') }}">
+            <i class="bi bi-star me-2"></i>My Appraisals
+        </a>
+    </li>
+    {% endif %}
+    {% if current_user.role != 'director' and current_user.role != 'admin' %}
+    <li class="nav-item">
+        <a class="nav-link text-white" href="{{ url_for('main.my_expenses') }}">
+            <i class="bi bi-wallet2 me-2"></i>My Expenses
+        </a>
+    </li>
+    {% endif %}
+    
+    <!-- My Documents Collapsible (Top level for non-admins) -->
+    {% if current_user.role not in ['admin', 'director'] %}
+    <li class="nav-item">
+        <a class="nav-link text-white {{ 'collapsed' if request.endpoint != 'main.my_payslips' else '' }}" href="#myDocumentsCollapse" data-bs-toggle="collapse" aria-expanded="{{ 'true' if request.endpoint == 'main.my_payslips' else 'false' }}">
+            <i class="bi bi-file-earmark-text me-2"></i>My Documents
+            <i class="bi bi-chevron-down ms-auto float-end" style="font-size: 0.8rem; margin-top: 4px;"></i>
+        </a>
+        <div id="myDocumentsCollapse" class="collapse {{ 'show' if request.endpoint == 'main.my_payslips' else '' }}">
+            <ul class="nav flex-column ps-3 pb-2" style="background-color: rgba(255,255,255,0.02);">
+                <!-- Payslips -->
+                <li class="nav-item">
+                    <a class="nav-link text-white-50 small py-1" href="{{ url_for('main.my_payslips') }}">
+                        <i class="bi bi-cash-stack me-2"></i>Payslips
+                    </a>
+                </li>
+                
+                <!-- Offer Letters (Latest Only) -->
+                {% set ns_offer = namespace(found=false) %}
+                {% for doc in current_user.profile.documents|sort(attribute='upload_date', reverse=True) %}
+                    {% if doc.document_type == 'Offer Letter' and not ns_offer.found %}
+                    <li class="nav-item">
+                        <a class="nav-link text-white-50 small py-1" href="{{ url_for('static', filename='documents/' + doc.file_path) }}" target="_blank">
+                            <i class="bi bi-file-earmark-person me-2"></i>Offer Letter
+                        </a>
+                    </li>
+                    {% set ns_offer.found = true %}
+                    {% endif %}
+                {% endfor %}
+
+                <!-- Other Documents (Latest Only) -->
+                {% set displayed_titles_sidebar = namespace(titles=[]) %}
+                {% for doc in current_user.profile.documents|sort(attribute='upload_date', reverse=True) %}
+                    {% if doc.document_type != 'Offer Letter' and doc.title not in displayed_titles_sidebar.titles %}
+                    <li class="nav-item">
+                        <a class="nav-link text-white-50 extra-small py-1" href="{{ url_for('static', filename='documents/' + doc.file_path) }}" target="_blank">
+                            <i class="bi bi-file-earmark-medical me-2 text-primary"></i>{{ doc.title|truncate(15) }}
+                        </a>
+                    </li>
+                    {% set displayed_titles_sidebar.titles = displayed_titles_sidebar.titles + [doc.title] %}
+                    {% endif %}
+                {% endfor %}
+
+                {% if not current_user.profile.documents and not current_user.profile.payrolls.first() %}
+                <li class="nav-item">
+                    <span class="nav-link text-muted extra-small italic">No documents</span>
+                </li>
+                {% endif %}
+            </ul>
+        </div>
+    </li>
+    {% endif %}
+    {% endif %}
+    
+    {% if current_user.role != 'admin' and current_user.role != 'director' %}
+    <li class="nav-item">
+        <a class="nav-link text-white" href="{{ url_for('main.apply_leave') }}">
+            <i class="bi bi-calendar-plus me-2"></i>Apply Leave
+        </a>
+    </li>
+    {% endif %}
+    
+    {% if current_user.role != 'admin' and current_user.role != 'director' %}
+    <li class="nav-item">
+        <a class="nav-link text-white" href="#" data-bs-toggle="modal" data-bs-target="#orgChartModal">
+            <i class="bi bi-diagram-3 me-2"></i>Org Chart
+        </a>
+    </li>
+    {% endif %}
+
+    {% if current_user.has_permission('dashboard') %}
+    <li class="nav-item">
+        <a class="nav-link {% if request.endpoint == 'admin.dashboard' %}active{% else %}text-white{% endif %}" href="{{ url_for('admin.dashboard') }}">
+            <i class="bi bi-speedometer2 me-2"></i>
+            Dashboard
+        </a>
+    </li>
+    {% endif %}
+    
+    {% set is_manager = current_user.profile and current_user.profile.subordinates %}
+    {% set show_employee = current_user.has_permission('view_employees') or current_user.has_permission('add_employee') or current_user.has_permission('designations') or current_user.has_permission('attendance') or current_user.has_permission('roles') or current_user.has_permission('change_role') or is_manager %}
+    
+    {% if show_employee %}
+    {% set employee_active = request.endpoint in ['admin.view_employees', 'admin.add_employee', 'admin.change_role', 'admin.designations', 'main.attendance', 'admin.roles', 'admin.add_role', 'admin.edit_role', 'admin.manage_shifts'] %}
+    <li class="nav-item">
+        <a class="nav-link text-white {{ '' if employee_active else 'collapsed' }}" href="#" data-bs-toggle="collapse" data-bs-target="#employeeManagementMenu" aria-expanded="{{ 'true' if employee_active else 'false' }}">
+            <i class="bi bi-people-fill me-2"></i>
+            Employee
+            <i class="bi bi-chevron-down ms-auto float-end" style="font-size: 0.8rem;"></i>
+        </a>
+        <div id="employeeManagementMenu" class="collapse {% if employee_active %}show{% endif %}" style="background-color: rgba(255,255,255,0.05);">
+            <ul class="nav flex-column ps-3">
+                {% if current_user.has_permission('view_employees') %}
+                <li class="nav-item">
+                    <a class="nav-link {% if request.endpoint == 'admin.view_employees' %}text-white fw-bold{% else %}text-white-50{% endif %}" href="{{ url_for('admin.view_employees') }}">
+                        <i class="bi bi-person-lines-fill me-2"></i>Team
+                    </a>
+                </li>
+                {% endif %}
+                {% if current_user.has_permission('add_employee') %}
+                <li class="nav-item">
+                    <a class="nav-link {% if request.endpoint == 'admin.add_employee' %}text-white fw-bold{% else %}text-white-50{% endif %}" href="{{ url_for('admin.add_employee') }}">
+                        <i class="bi bi-person-plus-fill me-2"></i>Onboarding
+                    </a>
+                </li>
+                {% endif %}
+                {% if current_user.has_permission('designations') %}
+                <li class="nav-item">
+                    <a class="nav-link {% if request.endpoint == 'admin.designations' %}text-white fw-bold{% else %}text-white-50{% endif %}" href="{{ url_for('admin.designations') }}">
+                        <i class="bi bi-briefcase-fill me-2"></i>Designations
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link {% if request.endpoint == 'admin.departments' %}text-white fw-bold{% else %}text-white-50{% endif %}" href="{{ url_for('admin.departments') }}">
+                        <i class="bi bi-building me-2"></i>Departments
+                    </a>
+                </li>
+                {% if current_user.role == 'director' %}
+                <li class="nav-item">
+                    <a class="nav-link text-white-50" href="{{ url_for('main.my_expenses') }}">
+                        <i class="bi bi-wallet2 me-2"></i>My Expenses
+                    </a>
+                </li>
+                {% endif %}
+                {% endif %}
+                
+                {% if current_user.has_permission('attendance') or is_manager or current_user.has_permission('view_shifts') %}
+                <li class="nav-item">
+                    <a class="nav-link {% if request.endpoint == 'admin.manage_shifts' %}text-white fw-bold{% else %}text-white-50{% endif %}" href="{{ url_for('admin.manage_shifts') }}">
+                        <i class="bi bi-calendar-range me-2"></i>Shift Plan
+                    </a>
+                </li>
+                {% endif %}
+                
+                {% if current_user.has_permission('attendance') %}
+                <li class="nav-item">
+                    <a class="nav-link {% if request.endpoint == 'main.attendance' %}text-white fw-bold{% else %}text-white-50{% endif %}" href="{{ url_for('main.attendance') }}">
+                        <i class="bi bi-file-earmark-spreadsheet me-2"></i>Attendance
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link {% if request.endpoint == 'admin.manage_holidays' %}text-white fw-bold{% else %}text-white-50{% endif %}" href="{{ url_for('admin.manage_holidays') }}">
+                        <i class="bi bi-calendar-event me-2"></i>Holidays
+                    </a>
+                </li>
+                {% endif %}
+                
+                {% if current_user.role == 'admin' or current_user.has_permission('approve_leave') or (current_user.profile and current_user.profile.subordinates) %}
+                <li class="nav-item">
+                    <a class="nav-link {% if request.endpoint == 'main.leave_requests' %}text-white fw-bold{% else %}text-white-50{% endif %}" href="{{ url_for('main.leave_requests') }}">
+                        <i class="bi bi-check-circle me-2"></i>Approvals
+                    </a>
+                </li>
+                {% endif %}
+                
+                {% if current_user.role in ['admin', 'director'] %}
+                <li class="nav-item">
+                    <a class="nav-link text-white-50" href="#" data-bs-toggle="modal" data-bs-target="#orgChartModal">
+                        <i class="bi bi-diagram-3 me-2"></i>Org Chart
+                    </a>
+                </li>
+                {% endif %}
+
+                {% if current_user.has_permission('roles') %}
+                <li class="nav-item">
+                    <a class="nav-link {% if request.endpoint in ['admin.roles', 'admin.add_role', 'admin.edit_role'] %}text-white fw-bold{% else %}text-white-50{% endif %}" href="{{ url_for('admin.roles') }}">
+                        <i class="bi bi-shield-check me-2"></i>Roles
+                    </a>
+                </li>
+                {% endif %}
+                {% if current_user.has_permission('change_role') %}
+                <li class="nav-item">
+                    <a class="nav-link {% if request.endpoint == 'admin.change_role' %}text-white fw-bold{% else %}text-white-50{% endif %}" href="{{ url_for('admin.change_role') }}">
+                        <i class="bi bi-person-gear me-2"></i>Change Role
+                    </a>
+                </li>
+                {% endif %}
+
+                <!-- My Documents (Specific for Admin/Director within Employee section) -->
+                {% if current_user.role in ['admin', 'director'] %}
+                <li class="nav-item mt-2 border-top border-white border-opacity-10 pt-2">
+                    <a class="nav-link text-white-50 small py-1" href="#myDocsAdminCollapse" data-bs-toggle="collapse" aria-expanded="false">
+                        <i class="bi bi-file-earmark-text me-2"></i>My Documents
+                        <i class="bi bi-chevron-down ms-auto float-end extra-small"></i>
+                    </a>
+                    <div id="myDocsAdminCollapse" class="collapse">
+                        <ul class="nav flex-column ps-3">
+                            {% if current_user.profile %}
+                                <!-- Payslips -->
+                                <li class="nav-item">
+                                    <a class="nav-link text-white-50 extra-small py-1" href="{{ url_for('main.my_payslips') }}">
+                                        <i class="bi bi-cash-stack me-2"></i>Payslips
+                                    </a>
+                                </li>
+                                
+                                <!-- Latest Offer Letter -->
+                                {% set ns_offer_admin = namespace(found=false) %}
+                                {% for doc in current_user.profile.documents|sort(attribute='upload_date', reverse=True) %}
+                                    {% if doc.document_type == 'Offer Letter' and not ns_offer_admin.found %}
+                                    <li class="nav-item">
+                                        <a class="nav-link text-white-50 extra-small py-1" href="{{ url_for('static', filename='documents/' + doc.file_path) }}" target="_blank">
+                                            <i class="bi bi-file-earmark-person me-2"></i>Offer Letter
+                                        </a>
+                                    </li>
+                                    {% set ns_offer_admin.found = true %}
+                                    {% endif %}
+                                {% endfor %}
+
+                                                            <!-- Other Documents (Latest Only) -->
+                                                            {% set displayed_titles_admin = namespace(titles=[]) %}
+                                                            {% for doc in current_user.profile.documents|sort(attribute='upload_date', reverse=True) %}
+                                                                {% if doc.document_type != 'Offer Letter' and doc.title not in displayed_titles_admin.titles %}
+                                                                <li class="nav-item">
+                                                                    <a class="nav-link text-white-50 extra-small py-1" href="{{ url_for('static', filename='documents/' + doc.file_path) }}" target="_blank">
+                                                                        <i class="bi bi-file-earmark-medical me-2 text-primary"></i>{{ doc.title|truncate(12) }}
+                                                                    </a>
+                                                                </li>
+                                                                {% set displayed_titles_admin.titles = displayed_titles_admin.titles + [doc.title] %}
+                                                                {% endif %}
+                                                            {% endfor %}                            {% else %}
+                                <li class="nav-item">
+                                    <span class="nav-link text-muted extra-small italic">Profile required</span>
+                                </li>
+                            {% endif %}
+                        </ul>
+                    </div>
+                </li>
+                {% endif %}
+            </ul>
+        </div>
+    </li>
+    {% endif %}
+
+    {% if current_user.role == 'admin' or current_user.has_permission('checklist') %}
+    <li class="nav-item">
+        <a class="nav-link {% if request.endpoint == 'admin.manage_tasks' %}active{% else %}text-white{% endif %}" href="{{ url_for('admin.manage_tasks') }}">
+            <i class="bi bi-list-check me-2"></i>Tasks
+        </a>
+    </li>
+    {% endif %}
+
+    {% set show_assets = current_user.has_permission('view_assets') or current_user.has_permission('add_asset') %}
+    {% if show_assets %}
+    {% set asset_active = request.endpoint in ['admin.view_assets', 'admin.add_asset', 'admin.edit_asset'] %}
+    <li class="nav-item">
+        <a class="nav-link text-white {{ '' if asset_active else 'collapsed' }}" href="#" data-bs-toggle="collapse" data-bs-target="#assetMenu" aria-expanded="{{ 'true' if asset_active else 'false' }}">
+            <i class="bi bi-pc-display-horizontal me-2"></i>
+            Assets
+            <i class="bi bi-chevron-down ms-auto float-end" style="font-size: 0.8rem;"></i>
+        </a>
+        <div id="assetMenu" class="collapse {% if asset_active %}show{% endif %}" style="background-color: rgba(255,255,255,0.05);">
+             <ul class="nav flex-column ps-3">
+                {% if current_user.has_permission('view_assets') %}
+                <li class="nav-item">
+                    <a class="nav-link {% if request.endpoint == 'admin.view_assets' %}text-white fw-bold{% else %}text-white-50{% endif %}" href="{{ url_for('admin.view_assets') }}">
+                        <i class="bi bi-list-ul me-2"></i>View Assets
+                    </a>
+                </li>
+                {% endif %}
+                {% if current_user.has_permission('add_asset') %}
+                <li class="nav-item">
+                    <a class="nav-link {% if request.endpoint == 'admin.add_asset' %}text-white fw-bold{% else %}text-white-50{% endif %}" href="{{ url_for('admin.add_asset') }}">
+                        <i class="bi bi-plus-circle me-2"></i>Add Asset
+                    </a>
+                </li>
+                {% endif %}
+             </ul>
+        </div>
+    </li>
+    {% endif %}
+
+    {% set show_vendors = current_user.has_permission('view_vendors') or current_user.has_permission('add_vendor') %}
+    {% if show_vendors %}
+    {% set vendor_active = request.endpoint in ['admin.view_vendors', 'admin.add_vendor', 'admin.edit_vendor'] %}
+    <li class="nav-item">
+        <a class="nav-link text-white {{ '' if vendor_active else 'collapsed' }}" href="#" data-bs-toggle="collapse" data-bs-target="#vendorMenu" aria-expanded="{{ 'true' if vendor_active else 'false' }}">
+            <i class="bi bi-shop me-2"></i>
+            Vendors
+            <i class="bi bi-chevron-down ms-auto float-end" style="font-size: 0.8rem;"></i>
+        </a>
+        <div id="vendorMenu" class="collapse {% if vendor_active %}show{% endif %}" style="background-color: rgba(255,255,255,0.05);">
+             <ul class="nav flex-column ps-3">
+                {% if current_user.has_permission('view_vendors') %}
+                <li class="nav-item">
+                    <a class="nav-link {% if request.endpoint == 'admin.view_vendors' %}text-white fw-bold{% else %}text-white-50{% endif %}" href="{{ url_for('admin.view_vendors') }}">
+                        <i class="bi bi-list-ul me-2"></i>View Vendors
+                    </a>
+                </li>
+                {% endif %}
+                {% if current_user.has_permission('add_vendor') %}
+                <li class="nav-item">
+                    <a class="nav-link {% if request.endpoint == 'admin.add_vendor' %}text-white fw-bold{% else %}text-white-50{% endif %}" href="{{ url_for('admin.add_vendor') }}">
+                        <i class="bi bi-plus-circle me-2"></i>Add Vendor
+                    </a>
+                </li>
+                {% endif %}
+             </ul>
+        </div>
+    </li>
+    {% endif %}
+
+    {% if current_user.role == 'admin' or current_user.role == 'director' %}
+    {% set liquidity_active = request.endpoint in ['admin.manage_credits', 'admin.add_credit', 'admin.manage_debits', 'admin.add_debit', 'admin.manage_invoices', 'admin.add_invoice', 'admin.cash_position', 'admin.manage_purchase_orders', 'admin.add_purchase_order', 'admin.bill_estimation'] %}
+    <li class="nav-item">
+        <a class="nav-link text-white {{ '' if liquidity_active else 'collapsed' }}" href="#" data-bs-toggle="collapse" data-bs-target="#liquidityMenu" aria-expanded="{{ 'true' if liquidity_active else 'false' }}">
+            <i class="bi bi-currency-exchange me-2"></i>
+            Liquidity
+            <i class="bi bi-chevron-down ms-auto float-end" style="font-size: 0.8rem;"></i>
+        </a>
+        <div id="liquidityMenu" class="collapse {% if liquidity_active %}show{% endif %}" style="background-color: rgba(255,255,255,0.05);">
+             <ul class="nav flex-column ps-3">
+                <li class="nav-item">
+                    <a class="nav-link {% if request.endpoint == 'admin.cash_position' %}text-white fw-bold{% else %}text-white-50{% endif %}" href="{{ url_for('admin.cash_position') }}">
+                        <i class="bi bi-pie-chart-fill me-2"></i>Cash Position
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link {% if request.endpoint == 'admin.manage_credits' %}text-white fw-bold{% else %}text-white-50{% endif %}" href="{{ url_for('admin.manage_credits') }}">
+                        <i class="bi bi-arrow-down-circle me-2"></i>Credit
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link {% if request.endpoint == 'admin.manage_debits' %}text-white fw-bold{% else %}text-white-50{% endif %}" href="{{ url_for('admin.manage_debits') }}">
+                        <i class="bi bi-arrow-up-circle me-2"></i>Debit
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link {% if request.endpoint == 'admin.manage_invoices' %}text-white fw-bold{% else %}text-white-50{% endif %}" href="{{ url_for('admin.manage_invoices') }}">
+                        <i class="bi bi-receipt-cutoff me-2"></i>Invoice
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link {% if request.endpoint == 'admin.manage_purchase_orders' %}text-white fw-bold{% else %}text-white-50{% endif %}" href="{{ url_for('admin.manage_purchase_orders') }}">
+                        <i class="bi bi-cart4 me-2"></i>Purchase Order
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link {% if request.endpoint == 'admin.bill_estimation' %}text-white fw-bold{% else %}text-white-50{% endif %}" href="{{ url_for('admin.bill_estimation') }}">
+                        <i class="bi bi-calculator me-2"></i>Bill Estimation
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link {% if request.endpoint == 'admin.manage_signatures' %}text-white fw-bold{% else %}text-white-50{% endif %}" href="{{ url_for('admin.manage_signatures') }}">
+                        <i class="bi bi-pen-fill me-2"></i>Signatures
+                    </a>
+                </li>
+             </ul>
+        </div>
+    </li>
+    {% endif %}
+
+    {% if current_user.has_permission('manage_payroll') %}
+    {% set payroll_active = request.endpoint in ['admin.manage_payroll', 'admin.manage_expenses'] %}
+    <li class="nav-item">
+        <a class="nav-link text-white {{ '' if payroll_active else 'collapsed' }}" href="#" data-bs-toggle="collapse" data-bs-target="#payrollMenu" aria-expanded="{{ 'true' if payroll_active else 'false' }}">
+            <i class="bi bi-cash-coin me-2"></i>
+            Payroll
+            <i class="bi bi-chevron-down ms-auto float-end" style="font-size: 0.8rem;"></i>
+        </a>
+        <div id="payrollMenu" class="collapse {% if payroll_active %}show{% endif %}" style="background-color: rgba(255,255,255,0.05);">
+             <ul class="nav flex-column ps-3">
+                <li class="nav-item">
+                    <a class="nav-link {% if request.endpoint == 'admin.salary_structures' %}text-white fw-bold{% else %}text-white-50{% endif %}" href="{{ url_for('admin.salary_structures') }}">
+                        <i class="bi bi-gear-fill me-2"></i>Salary Structure
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link {% if request.endpoint == 'admin.manage_payroll' %}text-white fw-bold{% else %}text-white-50{% endif %}" href="{{ url_for('admin.manage_payroll') }}">
+                        <i class="bi bi-calculator me-2"></i>Manage Payroll
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link {% if request.endpoint == 'admin.manage_expenses' %}text-white fw-bold{% else %}text-white-50{% endif %}" href="{{ url_for('admin.manage_expenses') }}">
+                        <i class="bi bi-receipt me-2"></i>Expense Claims
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link {% if request.endpoint == 'admin.release_offer' %}text-white fw-bold{% else %}text-white-50{% endif %}" href="{{ url_for('admin.release_offer') }}">
+                        <i class="bi bi-file-earmark-text me-2"></i>Release Offer Letter
+                    </a>
+                </li>
+             </ul>
+        </div>
+    </li>
+    {% endif %}
+
+    <!-- Performance (Appraisals) -->
+    {% if current_user.role == 'admin' or current_user.role == 'director' %}
+    {% set appraisal_active = request.endpoint in ['admin.manage_appraisals', 'admin.edit_appraisal'] %}
+    <li class="nav-item">
+        <a class="nav-link text-white {{ '' if appraisal_active else 'collapsed' }}" href="#" data-bs-toggle="collapse" data-bs-target="#performanceMenu" aria-expanded="{{ 'true' if appraisal_active else 'false' }}">
+            <i class="bi bi-graph-up-arrow me-2"></i>
+            Performance
+            <i class="bi bi-chevron-down ms-auto float-end" style="font-size: 0.8rem;"></i>
+        </a>
+        <div id="performanceMenu" class="collapse {% if appraisal_active %}show{% endif %}" style="background-color: rgba(255,255,255,0.05);">
+             <ul class="nav flex-column ps-3">
+                <li class="nav-item">
+                    <a class="nav-link {% if request.endpoint == 'admin.manage_appraisals' %}text-white fw-bold{% else %}text-white-50{% endif %}" href="{{ url_for('admin.manage_appraisals') }}">
+                        <i class="bi bi-star-fill me-2"></i>Appraisals
+                    </a>
+                </li>
+             </ul>
+        </div>
+    </li>
+    {% endif %}
+
+    <!-- Recruitment (ATS) -->
+    {% if current_user.has_permission('manage_ats') or current_user.role == 'admin' %}
+    {% set ats_active = request.endpoint in ['admin.manage_jobs', 'admin.edit_job', 'admin.manage_candidates', 'admin.edit_candidate'] %}
+    <li class="nav-item">
+        <a class="nav-link text-white {{ '' if ats_active else 'collapsed' }}" href="#" data-bs-toggle="collapse" data-bs-target="#atsMenu" aria-expanded="{{ 'true' if ats_active else 'false' }}">
+            <i class="bi bi-briefcase me-2"></i>
+            Recruitment
+            <i class="bi bi-chevron-down ms-auto float-end" style="font-size: 0.8rem;"></i>
+        </a>
+        <div id="atsMenu" class="collapse {% if ats_active %}show{% endif %}" style="background-color: rgba(255,255,255,0.05);">
+             <ul class="nav flex-column ps-3">
+                <li class="nav-item">
+                    <a class="nav-link {% if request.endpoint == 'admin.manage_jobs' %}text-white fw-bold{% else %}text-white-50{% endif %}" href="{{ url_for('admin.manage_jobs') }}">
+                        <i class="bi bi-list-task me-2"></i>Jobs
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link {% if request.endpoint == 'admin.manage_candidates' %}text-white fw-bold{% else %}text-white-50{% endif %}" href="{{ url_for('admin.manage_candidates') }}">
+                        <i class="bi bi-person-rolodex me-2"></i>Candidates
+                    </a>
+                </li>
+             </ul>
+        </div>
+    </li>
+    {% endif %}
+
+    <!-- System -->
+    {% if current_user.role == 'admin' %}
+    <li class="nav-item mt-3 border-top border-white border-opacity-10 pt-2">
+         <span class="nav-link text-white-50 small text-uppercase fw-bold" style="font-size: 0.7rem; letter-spacing: 1px;">System</span>
+    </li>
+
+    <li class="nav-item">
+        <a class="nav-link {% if request.endpoint == 'admin.manage_data' %}active{% else %}text-white{% endif %}" href="{{ url_for('admin.manage_data') }}">
+            <i class="bi bi-database-gear me-2"></i>
+            Manage Data
+        </a>
+    </li>
+
+    <li class="nav-item">
+        <a class="nav-link {% if request.endpoint == 'admin.letter_head' %}active{% else %}text-white{% endif %}" href="{{ url_for('admin.letter_head') }}">
+            <i class="bi bi-file-earmark-text me-2"></i>
+            Letter Head
+        </a>
+    </li>
+
+    <li class="nav-item">
+        <a class="nav-link {% if request.endpoint == 'admin.audit_logs' %}active{% else %}text-white{% endif %}" href="{{ url_for('admin.audit_logs') }}">
+            <i class="bi bi-activity me-2"></i>
+            Audit Logs
+        </a>
+    </li>
+    {% endif %}
+
+    <li class="nav-item">
+        <a class="nav-link {% if request.endpoint == 'main.view_calendar' %}active{% else %}text-white{% endif %}" href="{{ url_for('main.view_calendar') }}">
+            <i class="bi bi-calendar3 me-2"></i>
+            Calendar
+        </a>
+    </li>
+
+</ul>

@@ -1,0 +1,128 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+        <div>
+            <h3 class="fw-bold text-dark mb-0">Team Members</h3>
+            <p class="text-muted small">Manage and track your workforce effectively.</p>
+        </div>
+        <div class="d-flex gap-2">
+            <a href="{{ url_for('admin.export_employees') }}" class="btn btn-sm btn-outline-primary rounded-pill px-4 fw-semibold">
+                <i class="bi bi-download me-2"></i>Export
+            </a>
+            <a href="{{ url_for('admin.add_employee') }}" class="btn btn-sm btn-primary rounded-pill px-4 fw-semibold shadow-sm">
+                <i class="bi bi-person-plus-fill me-2"></i>Onboard Employee
+            </a>
+        </div>
+    </div>
+
+    <!-- Search Section (Modern Enterprise Style) -->
+    <div class="card border-0 shadow-sm rounded-4 mb-4" style="border: 1px solid #e2e8f0 !important;">
+        <div class="card-body p-2">
+            <form action="{{ url_for('admin.view_employees') }}" method="GET">
+                <div class="input-group">
+                    <span class="input-group-text bg-transparent border-0 ps-3"><i class="bi bi-search text-muted"></i></span>
+                    <input type="text" name="search_query" id="employeeSearchInput" class="form-control border-0 shadow-none ps-2" placeholder="Search by name, ID, or role..." value="{{ search_query }}" list="employee-suggestions" autocomplete="off">
+                    {% if search_query %}
+                    <a href="{{ url_for('admin.view_employees') }}" class="btn btn-link text-muted text-decoration-none d-flex align-items-center">
+                        <i class="bi bi-x-circle-fill"></i>
+                    </a>
+                    {% endif %}
+                    <button type="submit" class="btn btn-primary rounded-pill px-4 m-1 fw-semibold">Search</button>
+                </div>
+                <datalist id="employee-suggestions"></datalist>
+            </form>
+        </div>
+    </div>
+
+    <!-- Employee Grid (Vertical Widgets) -->
+    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 row-cols-xl-4 g-4">
+        {% for employee in employees %}
+        <div class="col">
+            <div class="card border-0 shadow-sm rounded-4 h-100 overflow-hidden text-center" style="border: 1px solid #e2e8f0 !important; cursor: pointer;" data-bs-toggle="collapse" data-bs-target="#empDetails{{ employee.id }}" aria-expanded="false">
+                <div class="card-body p-4 position-relative">
+                    {% set status = employee.status_info %}
+                    <span class="badge {{ status.class }} position-absolute top-0 end-0 m-3 extra-small">{{ status.text }}</span>
+
+                    <div class="mb-3">
+                        <img src="{{ url_for('static', filename='img/' + (employee.image_file or 'default.jpg')) }}" class="rounded-circle border border-4 border-white shadow-sm {{ 'grayscale' if employee.is_effectively_resigned else '' }}" width="90" height="90" style="object-fit: cover;">
+                    </div>
+                    
+                    <h5 class="fw-bold text-dark mb-1">{{ employee.first_name }} {{ employee.last_name }}</h5>
+                    <p class="text-primary fw-semibold extra-small text-uppercase mb-1">
+                        {{ employee.designation.title if employee.designation else 'General' }}
+                    </p>
+                    <div class="text-muted extra-small font-monospace mb-2">{{ employee.user.employeeid }}</div>
+                    
+                    <div class="text-muted extra-small opacity-50"><i class="bi bi-chevron-down"></i> View Details</div>
+
+                    <div class="collapse mt-3" id="empDetails{{ employee.id }}">
+                        <div class="border-top pt-3">
+                            <div class="mb-2">
+                                <a href="mailto:{{ employee.email }}" class="text-decoration-none text-secondary small d-block text-truncate" onclick="event.stopPropagation();">
+                                    <i class="bi bi-envelope me-2"></i>{{ employee.email }}
+                                </a>
+                            </div>
+                            <div class="mb-3">
+                                <a href="tel:{{ employee.phone_number }}" class="text-decoration-none text-secondary small d-block" onclick="event.stopPropagation();">
+                                    <i class="bi bi-telephone me-2"></i>{{ employee.phone_number }}
+                                </a>
+                            </div>
+                            
+                            <div class="d-flex justify-content-center gap-2 mt-3" onclick="event.stopPropagation();">
+                                <a href="{{ url_for('admin.admin_view_employee_profile', employee_id=employee.id) }}" class="btn btn-light text-primary rounded-circle shadow-sm btn-sm" title="View Profile" style="width: 32px; height: 32px; display: flex; align-items: center; justify-content: center;">
+                                    <i class="bi bi-eye-fill"></i>
+                                </a>
+                                <a href="{{ url_for('admin.edit_employee', employee_id=employee.id) }}" class="btn btn-light text-secondary rounded-circle shadow-sm btn-sm" title="Edit" style="width: 32px; height: 32px; display: flex; align-items: center; justify-content: center;">
+                                    <i class="bi bi-pencil-fill"></i>
+                                </a>
+                                <form action="{{ url_for('admin.delete_employee', user_id=employee.user.id) }}" method="POST" class="d-inline">
+                                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                    <button type="submit" class="btn btn-light text-danger rounded-circle shadow-sm btn-sm" title="Delete" onclick="return confirm('Confirm deletion of employee: {{ employee.first_name }}?');" style="width: 32px; height: 32px; display: flex; align-items: center; justify-content: center;">
+                                        <i class="bi bi-trash-fill"></i>
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% else %}
+        <div class="col-12">
+            <div class="text-center py-5 text-muted">
+                <i class="bi bi-people fs-1 d-block mb-3 opacity-25"></i>
+                <p class="mb-0 fw-semibold">No team members found.</p>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+<script>
+document.getElementById('employeeSearchInput').addEventListener('input', function() {
+    let query = this.value;
+    if (query.length < 2) return;
+    
+    fetch(`{{ url_for('admin.search_employees_api') }}?q=${query}`)
+        .then(response => response.json())
+        .then(data => {
+            let dataList = document.getElementById('employee-suggestions');
+            dataList.innerHTML = '';
+            data.forEach(name => {
+                let option = document.createElement('option');
+                option.value = name;
+                dataList.appendChild(option);
+            });
+        })
+        .catch(error => console.error('Error fetching suggestions:', error));
+});
+</script>
+
+<style>
+    .extra-small { font-size: 0.7rem; }
+    .rounded-top-4 { border-top-left-radius: 12px !important; border-top-right-radius: 12px !important; }
+    .grayscale { filter: grayscale(100%); opacity: 0.7; }
+</style>
+{% endblock %}

@@ -1,0 +1,95 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <div class="row">
+        <!-- Add Job Column -->
+        <div class="col-md-4 mb-4">
+            <div class="mb-4">
+                <h3 class="fw-bold text-dark">Job Openings</h3>
+                <p class="text-muted small">Manage recruitment and positions.</p>
+            </div>
+
+            <div class="card border-0 shadow-sm rounded-4" style="border: 1px solid #e2e8f0 !important;">
+                <div class="card-header bg-white py-3 border-0 rounded-top-4" style="border-left: 4px solid #e67e22 !important;">
+                    <h6 class="m-0 fw-semibold text-dark"><i class="bi bi-plus-circle me-2 text-primary"></i>Post New Job</h6>
+                </div>
+                <div class="card-body p-4">
+                    <form method="POST" action="">
+                        {{ form.hidden_tag() }}
+                        <div class="mb-3">
+                            <label class="form-label small fw-semibold text-secondary text-uppercase" style="letter-spacing: 0.5px;">Job Title</label>
+                            {{ form.title(class="form-control shadow-none border-light bg-light rounded-3 py-2", placeholder="e.g. Senior Developer") }}
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label small fw-semibold text-secondary text-uppercase" style="letter-spacing: 0.5px;">Department</label>
+                            {{ form.department(class="form-select shadow-none border-light bg-light rounded-3 py-2") }}
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label small fw-semibold text-secondary text-uppercase" style="letter-spacing: 0.5px;">Description</label>
+                            {{ form.description(class="form-control shadow-none border-light bg-light rounded-3 py-2", rows=3) }}
+                        </div>
+                        <div class="mb-4">
+                            <label class="form-label small fw-semibold text-secondary text-uppercase" style="letter-spacing: 0.5px;">Opening Status</label>
+                            {{ form.status(class="form-select shadow-none border-light bg-light rounded-3 py-2") }}
+                        </div>
+                        <div class="d-grid pt-2">
+                            <button type="submit" class="btn btn-primary rounded-pill py-2 fw-semibold shadow-sm">
+                                <i class="bi bi-save me-2"></i>Publish Job
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- List Jobs Column -->
+        <div class="col-md-8">
+            <div class="card border-0 shadow-sm rounded-4" style="border: 1px solid #e2e8f0 !important;">
+                <div class="card-header bg-white py-3 border-0 rounded-top-4" style="border-left: 4px solid #e67e22 !important;">
+                    <h6 class="m-0 fw-semibold text-dark"><i class="bi bi-briefcase me-2 text-primary"></i>Vacancies</h6>
+                </div>
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle mb-0">
+                            <thead class="bg-light text-muted extra-small text-uppercase">
+                                <tr>
+                                    <th class="ps-4">Position</th>
+                                    <th>Department</th>
+                                    <th>Status</th>
+                                    <th class="pe-4 text-end">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for job in jobs %}
+                                <tr>
+                                    <td class="ps-4 fw-bold text-dark">{{ job.title }}</td>
+                                    <td class="small">{{ job.department.name if job.department else '-' }}</td>
+                                    <td>
+                                        <span class="text-{% if job.status == 'Open' %}success{% elif job.status == 'Closed' %}secondary{% else %}warning{% endif %} fw-semibold extra-small">
+                                            {{ job.status }}
+                                        </span>
+                                    </td>
+                                    <td class="pe-4 text-end">
+                                        <a href="{{ url_for('admin.edit_job', job_id=job.id) }}" class="btn btn-sm btn-light text-primary rounded-circle shadow-sm" style="width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; float: right;">
+                                            <i class="bi bi-pencil-fill"></i>
+                                        </a>
+                                    </td>
+                                </tr>
+                                {% else %}
+                                <tr><td colspan="4" class="text-center py-5 text-muted">No vacancies posted.</td></tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .extra-small { font-size: 0.7rem; }
+    .rounded-top-4 { border-top-left-radius: 12px !important; border-top-right-radius: 12px !important; }
+</style>
+{% endblock %}

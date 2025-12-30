@@ -1,0 +1,96 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <div class="mb-4 d-flex justify-content-between align-items-center">
+        <div>
+            <h3 class="fw-bold text-dark mb-1">Task Update</h3>
+            <p class="text-muted small mb-0">Update progress and provide feedback for your assigned task.</p>
+        </div>
+        <a href="{{ url_for('main.profile') }}" class="btn btn-light rounded-pill border shadow-sm btn-sm">
+            <i class="bi bi-arrow-left me-2"></i>Back to Profile
+        </a>
+    </div>
+
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card border-0 shadow-sm rounded-4 mb-4" style="border: 1px solid #e2e8f0 !important;">
+                <div class="card-header bg-white py-3 border-0 rounded-top-4" style="border-left: 4px solid #e67e22 !important;">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div class="d-flex align-items-center gap-3">
+                            <h5 class="fw-bold text-dark mb-0">Task #{{ task.master_task.task_no or 'T-' ~ task.id }}</h5>
+                            <span class="badge rounded-pill extra-small px-3 py-2 text-white" style="background-color: 
+                                {% if task.master_task.priority == 'High' %}#dc3545
+                                {% elif task.master_task.priority == 'Medium' %}#e67e22
+                                {% else %}#ffc107{% endif %};">
+                                {{ task.master_task.priority }} Priority
+                            </span>
+                        </div>
+                        <span class="badge rounded-pill extra-small px-3 py-2 
+                            {% if task.status == 'Completed' %}bg-success-subtle text-success
+                            {% elif task.status == 'WIP' %}bg-info-subtle text-info
+                            {% elif task.status == 'Rejected' %}bg-danger-subtle text-danger
+                            {% else %}bg-secondary-subtle text-secondary{% endif %}">
+                            {{ task.status }}
+                        </span>
+                    </div>
+                </div>
+                <div class="card-body p-4">
+                    <div class="mb-4">
+                        <label class="text-muted extra-small fw-bold text-uppercase mb-2">Task Description</label>
+                        <div class="p-3 bg-light rounded-3 text-dark">
+                            {% if task.master_task.task_type == 'Others' and task.master_task.other_type_name %}
+                                <strong class="text-primary">[{{ task.master_task.other_type_name }}]</strong>
+                            {% endif %}
+                            {{ task.master_task.description }}
+                        </div>
+                    </div>
+
+                    <form action="{{ url_for('main.update_task_status', task_id=task.id) }}" method="POST">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label class="form-label small fw-semibold text-secondary text-uppercase">Current Status</label>
+                                <select name="status" class="form-select shadow-none border-light bg-light rounded-3 task-status-select" data-task-id="{{ task.id }}">
+                                    <option value="YTS" {% if task.status == 'YTS' %}selected{% endif %}>YTS (Yet To Start)</option>
+                                    <option value="WIP" {% if task.status == 'WIP' %}selected{% endif %}>WIP (Work In Progress)</option>
+                                    <option value="Completed" {% if task.status == 'Completed' %}selected{% endif %}>Completed</option>
+                                    <option value="Rejected" {% if task.status == 'Rejected' %}selected{% endif %}>Rejected</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6" id="followup-group-{{ task.id }}" style="display: {% if task.status in ['Completed', 'Rejected'] %}none{% else %}block{% endif %};">
+                                <label class="form-label small fw-semibold text-secondary text-uppercase">Next Follow-up Date</label>
+                                <input type="date" name="followup_date" class="form-control shadow-none border-light bg-light rounded-3" value="{{ task.followup_date.strftime('%Y-%m-%d') if task.followup_date else '' }}">
+                            </div>
+                            <div class="col-12">
+                                <label class="form-label small fw-semibold text-secondary text-uppercase">Update Notes / Reason</label>
+                                <textarea name="reason" class="form-control shadow-none border-light bg-light rounded-3" rows="4" placeholder="Mention any progress or challenges...">{{ task.reason or '' }}</textarea>
+                            </div>
+                            <div class="col-12 text-end mt-4">
+                                <button type="submit" class="btn btn-primary rounded-pill px-5 fw-bold shadow-sm">Save Update</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Task Status Toggle Logic
+    document.querySelector('.task-status-select').addEventListener('change', function() {
+        const taskId = this.dataset.taskId;
+        const followupGroup = document.getElementById(`followup-group-${taskId}`);
+        if (this.value === 'Completed' || this.value === 'Rejected') {
+            followupGroup.style.display = 'none';
+        } else {
+            followupGroup.style.display = 'block';
+        }
+    });
+</script>
+
+<style>
+    .extra-small { font-size: 0.75rem; }
+</style>
+{% endblock %}

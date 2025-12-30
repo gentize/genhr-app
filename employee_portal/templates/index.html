@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-3">
+    <h4 class="text-center">Welcome, {{ current_user.profile.first_name }}!</h4>
+</div>
+<div class="container">
+    <div class="bg-light p-5 rounded-lg m-3 text-center">
+        <p class="lead">This is your employee portal. You can manage your profile, attendance, and payslips here.</p>
+        <hr class="my-4">
+        <p>What would you like to do today?</p>
+        <a class="btn btn-primary btn-lg" href="{{ url_for('main.profile') }}" role="button">View Profile</a>
+    </div>
+</div>
+{% endblock %}

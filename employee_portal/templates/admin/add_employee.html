@@ -1,0 +1,304 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+        <div>
+            <h3 class="fw-bold text-dark mb-0">Employee Onboarding</h3>
+            <p class="text-muted small">Register new team members or bulk upload workforce data.</p>
+        </div>
+        <div class="d-flex gap-2">
+            <ul class="nav nav-pills bg-light rounded-pill p-1 shadow-sm" id="onboardTabs" role="tablist">
+                <li class="nav-item">
+                    <button class="nav-link active rounded-pill px-4 extra-small fw-bold text-uppercase" id="single-tab" data-bs-toggle="tab" data-bs-target="#single" type="button">Single Entry</button>
+                </li>
+                <li class="nav-item">
+                    <button class="nav-link rounded-pill px-4 extra-small fw-bold text-uppercase" id="bulk-tab" data-bs-toggle="tab" data-bs-target="#bulk" type="button">Bulk Upload</button>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="tab-content" id="onboardTabsContent">
+        <!-- Single Entry Tab -->
+        <div class="tab-pane fade show active" id="single" role="tabpanel">
+            <form method="POST" action="" enctype="multipart/form-data">
+                {{ form.hidden_tag() }}
+
+                <div class="row g-4">
+                    <!-- Personal Information -->
+                    <div class="col-lg-7">
+                        <div class="card border-0 shadow-sm rounded-4 mb-4" style="border: 1px solid #e2e8f0 !important;">
+                            <div class="card-header bg-white py-3 border-0 rounded-top-4" style="border-left: 4px solid #e67e22 !important;">
+                                <h6 class="m-0 fw-semibold text-dark"><i class="bi bi-person-badge me-2 text-primary"></i>Personal Information</h6>
+                            </div>
+                            <div class="card-body p-4">
+                                <div class="row g-3">
+                                    <div class="col-md-2">
+                                        <label class="form-label small fw-semibold text-secondary text-uppercase" style="letter-spacing: 0.5px;">Prefix</label>
+                                        {{ form.prefix(class="form-select shadow-none border-light bg-light rounded-3") }}
+                                    </div>
+                                    <div class="col-md-5">
+                                        <label class="form-label small fw-semibold text-secondary text-uppercase" style="letter-spacing: 0.5px;">First Name</label>
+                                        {{ form.first_name(class="form-control shadow-none border-light bg-light rounded-3") }}
+                                    </div>
+                                    <div class="col-md-5">
+                                        <label class="form-label small fw-semibold text-secondary text-uppercase" style="letter-spacing: 0.5px;">Last Name</label>
+                                        {{ form.last_name(class="form-control shadow-none border-light bg-light rounded-3") }}
+                                    </div>
+
+                                    <div class="col-md-4">
+                                        <label class="form-label small fw-semibold text-secondary text-uppercase" style="letter-spacing: 0.5px;">Date of Birth</label>
+                                        {{ form.date_of_birth(class="form-control shadow-none border-light bg-light rounded-3", type="date") }}
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label class="form-label small fw-semibold text-secondary text-uppercase" style="letter-spacing: 0.5px;">Gender</label>
+                                        {{ form.gender(class="form-select shadow-none border-light bg-light rounded-3") }}
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label class="form-label small fw-semibold text-secondary text-uppercase" style="letter-spacing: 0.5px;">Marital Status</label>
+                                        {{ form.marital_status(class="form-select shadow-none border-light bg-light rounded-3") }}
+                                    </div>
+
+                                    <div class="col-12">
+                                        <label class="form-label small fw-semibold text-secondary text-uppercase" style="letter-spacing: 0.5px;">Email Address</label>
+                                        {{ form.email(class="form-control shadow-none border-light bg-light rounded-3") }}
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label small fw-semibold text-secondary text-uppercase" style="letter-spacing: 0.5px;">Phone Number</label>
+                                        {{ form.phone_number(class="form-control shadow-none border-light bg-light rounded-3", placeholder="10 Digits") }}
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label small fw-semibold text-secondary text-uppercase" style="letter-spacing: 0.5px;">Emergency Contact</label>
+                                        {{ form.emergency_contact(class="form-control shadow-none border-light bg-light rounded-3") }}
+                                    </div>
+
+                                    <div class="col-12">
+                                        <label class="form-label small fw-semibold text-secondary text-uppercase" style="letter-spacing: 0.5px;">Residential Address</label>
+                                        {{ form.address(class="form-control shadow-none border-light bg-light rounded-3") }}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Identification & Bank -->
+                        <div class="card border-0 shadow-sm rounded-4 mb-4" style="border: 1px solid #e2e8f0 !important;">
+                            <div class="card-header bg-white py-3 border-0 rounded-top-4" style="border-left: 4px solid #e67e22 !important;">
+                                <h6 class="m-0 fw-semibold text-dark"><i class="bi bi-shield-check me-2 text-primary"></i>Compliance & Banking</h6>
+                            </div>
+                            <div class="card-body p-4">
+                                <div class="row g-3">
+                                    <div class="col-md-4">
+                                        <label class="form-label small fw-semibold text-secondary text-uppercase" style="letter-spacing: 0.5px;">PAN No.</label>
+                                        {{ form.pan_number(class="form-control shadow-none border-light bg-light rounded-3") }}
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label class="form-label small fw-semibold text-secondary text-uppercase" style="letter-spacing: 0.5px;">Aadhar No.</label>
+                                        {{ form.aadhar_number(class="form-control shadow-none border-light bg-light rounded-3") }}
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label class="form-label small fw-semibold text-secondary text-uppercase" style="letter-spacing: 0.5px;">UAN No.</label>
+                                        {{ form.uan_number(class="form-control shadow-none border-light bg-light rounded-3") }}
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label small fw-semibold text-secondary text-uppercase" style="letter-spacing: 0.5px;">PF Number</label>
+                                        {{ form.pf_number(class="form-control shadow-none border-light bg-light rounded-3") }}
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label small fw-semibold text-secondary text-uppercase" style="letter-spacing: 0.5px;">ESI Number</label>
+                                        {{ form.esi_number(class="form-control shadow-none border-light bg-light rounded-3") }}
+                                    </div>
+
+                                    <div class="col-md-12 mt-4"><hr class="my-1"></div>
+
+                                    <div class="col-md-6">
+                                        <label class="form-label small fw-semibold text-secondary text-uppercase" style="letter-spacing: 0.5px;">Bank Name</label>
+                                        {{ form.bank_name(class="form-control shadow-none border-light bg-light rounded-3") }}
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label small fw-semibold text-secondary text-uppercase" style="letter-spacing: 0.5px;">Account Number</label>
+                                        {{ form.bank_account_number(class="form-control shadow-none border-light bg-light rounded-3") }}
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label small fw-semibold text-secondary text-uppercase" style="letter-spacing: 0.5px;">IFSC Code</label>
+                                        {{ form.ifsc_code(class="form-control shadow-none border-light bg-light rounded-3") }}
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label small fw-semibold text-secondary text-uppercase" style="letter-spacing: 0.5px;">Branch</label>
+                                        {{ form.branch(class="form-control shadow-none border-light bg-light rounded-3") }}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Job & Credentials Side -->
+                    <div class="col-lg-5">
+                        <div class="card border-0 shadow-sm rounded-4 mb-4" style="border: 1px solid #e2e8f0 !important;">
+                            <div class="card-header bg-white py-3 border-0 rounded-top-4" style="border-left: 4px solid #e67e22 !important;">
+                                <h6 class="m-0 fw-semibold text-dark"><i class="bi bi-briefcase me-2 text-primary"></i>Employment Details</h6>
+                            </div>
+                            <div class="card-body p-4">
+                                <div class="mb-3">
+                                    <label class="form-label small fw-semibold text-secondary text-uppercase" style="letter-spacing: 0.5px;">Designation</label>
+                                    {{ form.designation(class="form-select shadow-none border-light bg-light rounded-3") }}
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label small fw-semibold text-secondary text-uppercase" style="letter-spacing: 0.5px;">Department</label>
+                                    {{ form.department(class="form-select shadow-none border-light bg-light rounded-3") }}
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label small fw-semibold text-secondary text-uppercase" style="letter-spacing: 0.5px;">Reports To (Manager)</label>
+                                    {{ form.reports_to(class="form-select shadow-none border-light bg-light rounded-3", id="reports_to") }}
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label small fw-semibold text-secondary text-uppercase" style="letter-spacing: 0.5px;">Employment Type</label>
+                                    {{ form.employment_type(class="form-select shadow-none border-light bg-light rounded-3") }}
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label small fw-semibold text-secondary text-uppercase" style="letter-spacing: 0.5px;">Date of Joining</label>
+                                    {{ form.date_of_joining(class="form-control shadow-none border-light bg-light rounded-3", type="date") }}
+                                </div>
+
+                                <!-- Resignation during Onboarding (Optional) -->
+                                <div class="row g-2 mt-2 pt-3 border-top">
+                                    <div class="col-md-4">
+                                        <div class="form-check form-switch mt-2">
+                                            {{ form.is_resigned(class="form-check-input", id="resignedCheck") }}
+                                            <label class="form-check-label fw-bold text-secondary extra-small" for="resignedCheck">Resigned?</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4" id="noticePeriodGroup" style="display: none;">
+                                        <label class="form-label extra-small fw-bold text-secondary text-uppercase">Notice Period</label>
+                                        {{ form.notice_period(class="form-select form-select-sm shadow-none border-light bg-light rounded-3", id="noticePeriodSelect") }}
+                                    </div>
+                                    <div class="col-md-4" id="resignedDateGroup" style="display: none;">
+                                        <label class="form-label extra-small fw-bold text-secondary text-uppercase">Date of Leaving</label>
+                                        {{ form.resigned_date(class="form-control form-control-sm shadow-none border-light bg-light rounded-3", type="date", id="leavingDateInput") }}
+                                    </div>
+                                </div>
+
+                                <div class="row g-2">
+                                    <div class="col-md-12">
+                                        <label class="form-label small fw-semibold text-secondary text-uppercase" style="letter-spacing: 0.5px;">Previous Employer</label>
+                                        {{ form.previous_employer(class="form-control shadow-none border-light bg-light rounded-3") }}
+                                    </div>
+                                    <div class="col-md-12 mt-3">
+                                        <label class="form-label small fw-semibold text-secondary text-uppercase" style="letter-spacing: 0.5px;">Years of Experience</label>
+                                        {{ form.years_of_experience(class="form-control shadow-none border-light bg-light rounded-3") }}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="card border-0 shadow-sm rounded-4 mb-4" style="border: 1px solid #e2e8f0 !important;">
+                            <div class="card-header bg-white py-3 border-0 rounded-top-4" style="border-left: 4px solid #e67e22 !important;">
+                                <h6 class="m-0 fw-semibold text-dark"><i class="bi bi-shield-lock me-2 text-primary"></i>Account Access</h6>
+                            </div>
+                            <div class="card-body p-4">
+                                <div class="mb-3">
+                                    <label class="form-label small fw-semibold text-secondary text-uppercase" style="letter-spacing: 0.5px;">System Password</label>
+                                    {{ form.password(class="form-control shadow-none border-light bg-light rounded-3") }}
+                                </div>
+                                <div class="mb-4">
+                                    <label class="form-label small fw-semibold text-secondary text-uppercase" style="letter-spacing: 0.5px;">Confirm Password</label>
+                                    {{ form.password2(class="form-control shadow-none border-light bg-light rounded-3") }}
+                                </div>
+                                
+                                <div class="mt-4 pt-2 border-top">
+                                    <label class="form-label small fw-semibold text-secondary text-uppercase" style="letter-spacing: 0.5px;">Profile Image</label>
+                                    {{ form.picture(class="form-control shadow-none border-0 bg-transparent px-0") }}
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="d-grid gap-2">
+                            {{ form.submit(class="btn btn-primary rounded-pill py-3 fw-bold shadow-sm") }}
+                            <a href="{{ url_for('admin.view_employees') }}" class="btn btn-light rounded-pill py-2 text-muted small">Cancel</a>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+        <!-- Bulk Upload Tab -->
+        <div class="tab-pane fade" id="bulk" role="tabpanel">
+            <div class="row justify-content-center">
+                <div class="col-lg-8">
+                    <div class="card border-0 shadow-sm rounded-4 text-center p-5" style="border: 1px solid #e2e8f0 !important;">
+                        <div class="mb-4">
+                            <i class="bi bi-file-earmark-spreadsheet text-success display-1"></i>
+                        </div>
+                        <h4 class="fw-bold text-dark">Workforce Import</h4>
+                        <p class="text-muted small mb-5">Efficiently onboard large teams using our Excel template.</p>
+                        
+                        <div class="mb-5">
+                            <a href="{{ url_for('admin.download_employee_template') }}" class="btn btn-outline-primary rounded-pill px-4 fw-semibold">
+                                <i class="bi bi-download me-2"></i>Download Template
+                            </a>
+                        </div>
+                        
+                        <form action="{{ url_for('admin.bulk_upload_employees') }}" method="POST" enctype="multipart/form-data" class="mx-auto" style="max-width: 450px;">
+                            <div class="input-group mb-3 p-1 bg-light rounded-pill border">
+                                <input type="file" name="file" class="form-control border-0 bg-transparent shadow-none" accept=".xlsx, .xls" required>
+                                <button class="btn btn-primary rounded-pill px-4" type="submit">Import</button>
+                            </div>
+                            <small class="text-muted extra-small">Supports .xlsx and .xls formats</small>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+<script>
+    $(document).ready(function() {
+        if ($('#reports_to').length) {
+            $('#reports_to').select2({
+                placeholder: "-- Select Manager --",
+                allowClear: true,
+                width: '100%'
+            });
+        }
+
+        // Resignation Logic
+        const $resignedCheck = $('#resignedCheck');
+        const $noticeGroup = $('#noticePeriodGroup');
+        const $dateGroup = $('#resignedDateGroup');
+        const $noticeSelect = $('#noticePeriodSelect');
+        const $leavingInput = $('#leavingDateInput');
+        
+        function calculateLeavingDate(months) {
+            if (!months || isNaN(months)) return '';
+            const now = new Date();
+            const leavingDate = new Date(now.getFullYear(), now.getMonth() + parseInt(months), now.getDate());
+            const year = leavingDate.getFullYear();
+            const month = String(leavingDate.getMonth() + 1).padStart(2, '0');
+            const day = String(leavingDate.getDate()).padStart(2, '0');
+            return `${year}-${month}-${day}`;
+        }
+
+        function updateVisibility() {
+            if ($resignedCheck.prop('checked')) {
+                $noticeGroup.show();
+                $dateGroup.show();
+            } else {
+                $noticeGroup.hide();
+                $dateGroup.hide();
+            }
+        }
+        
+        $resignedCheck.on('change', updateVisibility);
+        $noticeSelect.on('change', function() {
+            const months = $(this).val();
+            if (months) $leavingInput.val(calculateLeavingDate(months));
+        });
+
+        updateVisibility();
+    });
+</script>
+{% endblock %}

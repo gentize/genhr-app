@@ -1,0 +1,166 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+        <div>
+            <h3 class="fw-bold text-dark mb-0">Shift Plan</h3>
+            <p class="text-muted small">Manage and view employee shift assignments.</p>
+        </div>
+        <div class="d-flex gap-3 align-items-center">
+            <a href="{{ url_for('admin.view_shifts_calendar') }}" class="btn btn-outline-primary btn-sm rounded-pill px-3">
+                <i class="bi bi-calendar3 me-1"></i>View Calendar
+            </a>
+            <form class="d-flex gap-2 align-items-center" method="GET" action="{{ url_for('admin.manage_shifts') }}">
+                <label class="small fw-bold text-muted text-uppercase mb-0">View Date:</label>
+                <input type="date" name="date" class="form-control form-control-sm shadow-none border-light" value="{{ selected_date }}" onchange="this.form.submit()">
+            </form>
+        </div>
+    </div>
+
+    <div class="row g-4">
+        <!-- Shift Assignment Form -->
+        {% set can_edit = current_user.role in ['admin', 'director'] or current_user.has_permission('edit_shifts') or (current_user.profile and current_user.profile.subordinates) %}
+        {% if can_edit %}
+        <div class="col-lg-3">
+            <div class="card border-0 shadow-sm rounded-4 h-100">
+                <div class="card-header bg-white py-3 border-0 rounded-top-4" style="border-left: 4px solid #e67e22 !important;">
+                    <h6 class="m-0 fw-semibold text-dark"><i class="bi bi-person-plus me-2 text-primary"></i>Assign Shift</h6>
+                </div>
+                <div class="card-body p-4">
+                    <form method="POST" action="">
+                        {{ form.hidden_tag() }}
+                        <div class="mb-3">
+                            <label class="form-label small fw-bold text-secondary text-uppercase">Employee</label>
+                            {{ form.employee(class="form-select shadow-none border-light bg-light rounded-3") }}
+                        </div>
+                        <div class="mb-2">
+                            <label class="form-label small fw-bold text-secondary text-uppercase">From Date</label>
+                            {{ form.date(class="form-control shadow-none border-light bg-light rounded-3", type="date", value=selected_date) }}
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label small fw-bold text-secondary text-uppercase">To Date (Optional)</label>
+                            {{ form.end_date(class="form-control shadow-none border-light bg-light rounded-3", type="date") }}
+                            <div class="extra-small text-muted mt-1">Leave blank for single day.</div>
+                        </div>
+                        <div class="mb-4">
+                            <label class="form-label small fw-bold text-secondary text-uppercase">Shift Type</label>
+                            {{ form.shift_type(class="form-select shadow-none border-light bg-light rounded-3") }}
+                        </div>
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-primary rounded-pill fw-bold shadow-sm" style="background-color: #e67e22; border-color: #e67e22;">Assign Shift</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- Shift Display Grid -->
+        <div class="col-lg-{{ '9' if can_edit else '12' }}">
+            <div class="row g-2">
+                <!-- General Shift -->
+                <div class="col-md-3">
+                    <div class="card border-0 shadow-sm rounded-4 h-100 overflow-hidden">
+                        <div class="card-header bg-secondary bg-opacity-10 py-3 border-0 text-center">
+                            <h6 class="m-0 fw-bold text-secondary text-uppercase extra-small">
+                                <i class="bi bi-briefcase me-1"></i>General
+                            </h6>
+                            <div style="font-size: 0.6rem;" class="text-muted">08:00 AM - 17:30 PM</div>
+                        </div>
+                        <div class="card-body p-0">
+                            <ul class="list-group list-group-flush">
+                                {% for shift in general_shifts %}
+                                <li class="list-group-item border-light py-2 px-3">
+                                    <div class="fw-semibold text-dark small text-truncate">{{ shift.employee.first_name }}</div>
+                                    <div class="extra-small text-muted">{{ shift.employee.user.employeeid }}</div>
+                                </li>
+                                {% else %}
+                                <li class="list-group-item border-0 py-4 text-center text-muted extra-small">No assignments</li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Morning Shift -->
+                <div class="col-md-3">
+                    <div class="card border-0 shadow-sm rounded-4 h-100 overflow-hidden">
+                        <div class="card-header bg-warning bg-opacity-10 py-3 border-0 text-center">
+                            <h6 class="m-0 fw-bold text-warning-emphasis text-uppercase extra-small">
+                                <i class="bi bi-sun me-1"></i>Morning
+                            </h6>
+                            <div style="font-size: 0.6rem;" class="text-muted">06:00 AM - 14:00 PM</div>
+                        </div>
+                        <div class="card-body p-0">
+                            <ul class="list-group list-group-flush">
+                                {% for shift in morning_shifts %}
+                                <li class="list-group-item border-light py-2 px-3">
+                                    <div class="fw-semibold text-dark small text-truncate">{{ shift.employee.first_name }}</div>
+                                    <div class="extra-small text-muted">{{ shift.employee.user.employeeid }}</div>
+                                </li>
+                                {% else %}
+                                <li class="list-group-item border-0 py-4 text-center text-muted extra-small">No assignments</li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Noon Shift -->
+                <div class="col-md-3">
+                    <div class="card border-0 shadow-sm rounded-4 h-100 overflow-hidden">
+                        <div class="card-header bg-primary bg-opacity-10 py-3 border-0 text-center">
+                            <h6 class="m-0 fw-bold text-primary text-uppercase extra-small">
+                                <i class="bi bi-brightness-high me-1"></i>Noon
+                            </h6>
+                            <div style="font-size: 0.6rem;" class="text-muted">14:00 PM - 22:00 PM</div>
+                        </div>
+                        <div class="card-body p-0">
+                            <ul class="list-group list-group-flush">
+                                {% for shift in noon_shifts %}
+                                <li class="list-group-item border-light py-2 px-3">
+                                    <div class="fw-semibold text-dark small text-truncate">{{ shift.employee.first_name }}</div>
+                                    <div class="extra-small text-muted">{{ shift.employee.user.employeeid }}</div>
+                                </li>
+                                {% else %}
+                                <li class="list-group-item border-0 py-4 text-center text-muted extra-small">No assignments</li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Night Shift -->
+                <div class="col-md-3">
+                    <div class="card border-0 shadow-sm rounded-4 h-100 overflow-hidden">
+                        <div class="card-header bg-dark py-3 border-0 text-center">
+                            <h6 class="m-0 fw-bold text-white text-uppercase extra-small">
+                                <i class="bi bi-moon-stars me-1"></i>Night
+                            </h6>
+                            <div style="font-size: 0.6rem;" class="text-white-50">22:00 PM - 06:00 AM</div>
+                        </div>
+                        <div class="card-body p-0">
+                            <ul class="list-group list-group-flush">
+                                {% for shift in night_shifts %}
+                                <li class="list-group-item border-light py-2 px-3">
+                                    <div class="fw-semibold text-dark small text-truncate">{{ shift.employee.first_name }}</div>
+                                    <div class="extra-small text-muted">{{ shift.employee.user.employeeid }}</div>
+                                </li>
+                                {% else %}
+                                <li class="list-group-item border-0 py-4 text-center text-muted extra-small">No assignments</li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+
+<style>
+    .extra-small { font-size: 0.7rem; }
+</style>
+{% endblock %}

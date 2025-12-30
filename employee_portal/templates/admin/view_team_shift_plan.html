@@ -1,0 +1,76 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <div class="d-flex align-items-center justify-content-between mb-4">
+        <div>
+            <h3 class="fw-bold text-dark mb-0">Team Shift Plan</h3>
+            <p class="text-muted small">Weekly overview: {{ week_dates[0].strftime('%d %b') }} - {{ week_dates[-1].strftime('%d %b %Y') }}</p>
+        </div>
+        <div class="d-flex align-items-center gap-3">
+            <div class="btn-group shadow-sm" role="group">
+                <a href="{{ url_for('admin.view_team_shift_plan', start_date=prev_week) }}" class="btn btn-light border btn-sm px-3">
+                    <i class="bi bi-chevron-left me-1"></i>Previous Week
+                </a>
+                <a href="{{ url_for('admin.view_team_shift_plan', start_date=next_week) }}" class="btn btn-light border btn-sm px-3">
+                    Next Week<i class="bi bi-chevron-right ms-1"></i>
+                </a>
+            </div>
+            <a href="{{ url_for('admin.view_shifts_calendar') }}" class="btn btn-outline-primary btn-sm rounded-pill px-3">
+                <i class="bi bi-calendar3 me-1"></i>Monthly View
+            </a>
+        </div>
+    </div>
+
+    <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0 border-top">
+                    <thead class="bg-light">
+                        <tr>
+                            <th class="ps-4 py-3 text-uppercase extra-small fw-bold text-muted border-end" style="min-width: 200px;">Team Member</th>
+                            {% for d in week_dates %}
+                            <th class="text-center py-3 border-end {{ 'bg-primary bg-opacity-10' if d == today else '' }}">
+                                <div class="extra-small text-muted text-uppercase fw-bold">{{ d.strftime('%a') }}</div>
+                                <div class="small fw-bold">{{ d.strftime('%d %b') }}</div>
+                            </th>
+                            {% endfor %}
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for member in team_members %}
+                        <tr>
+                            <td class="ps-4 border-end">
+                                <div class="fw-bold text-dark small">{{ member.first_name }} {{ member.last_name }}</div>
+                                <div class="extra-small text-muted">{{ member.user.employeeid }}</div>
+                            </td>
+                            {% for d in week_dates %}
+                            {% set stype = plan_data[member.id][d] %}
+                            <td class="text-center p-2 border-end">
+                                {% if stype %}
+                                    <span class="badge w-100 py-2 border
+                                        {% if stype == 'General' %}bg-secondary bg-opacity-10 border-secondary-subtle text-dark
+                                        {% elif stype == 'Morning' %}bg-warning bg-opacity-10 border-warning-subtle text-dark
+                                        {% elif stype == 'Noon' %}bg-info bg-opacity-10 border-info-subtle text-dark
+                                        {% elif stype == 'Night' %}bg-dark text-white border-dark
+                                        {% endif %}" style="font-size: 0.65rem;">
+                                        {{ stype }}
+                                    </span>
+                                {% else %}
+                                    <span class="text-muted extra-small opacity-25">-</span>
+                                {% endif %}
+                            </td>
+                            {% endfor %}
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .extra-small { font-size: 0.7rem; }
+</style>
+{% endblock %}

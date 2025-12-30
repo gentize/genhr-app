@@ -1,0 +1,97 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <div class="d-flex align-items-center justify-content-between mb-4">
+        <div>
+            <h3 class="fw-bold text-dark mb-0">Shift Calendar</h3>
+            <p class="text-muted small">Monthly overview of employee shifts.</p>
+        </div>
+        <div class="d-flex align-items-center gap-3">
+            <a href="{{ url_for('admin.manage_shifts') }}" class="btn btn-outline-secondary btn-sm rounded-pill px-3">
+                <i class="bi bi-arrow-left me-1"></i>Back to Plan
+            </a>
+            <a href="{{ url_for('admin.view_team_shift_plan') }}" class="btn btn-primary btn-sm rounded-pill px-3 shadow-sm" style="background-color: #e67e22; border-color: #e67e22;">
+                <i class="bi bi-people-fill me-1"></i>Team Plan
+            </a>
+            <div class="btn-group shadow-sm" role="group">
+                <a href="{{ url_for('admin.view_shifts_calendar', year=year if month > 1 else year - 1, month=month - 1 if month > 1 else 12) }}" class="btn btn-light border">
+                    <i class="bi bi-chevron-left"></i>
+                </a>
+                <span class="btn btn-light border fw-bold px-4" style="min-width: 150px;">{{ month_name }} {{ year }}</span>
+                <a href="{{ url_for('admin.view_shifts_calendar', year=year if month < 12 else year + 1, month=month + 1 if month < 12 else 1) }}" class="btn btn-light border">
+                    <i class="bi bi-chevron-right"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
+        <div class="card-body p-0">
+            <div class="calendar-container">
+                <!-- Header -->
+                <div class="calendar-grid-header bg-light border-bottom d-flex" style="width: 100%;">
+                    <div class="flex-fill text-center py-2 text-uppercase extra-small fw-bold text-muted border-end" style="width: 14.28%;">Sun</div>
+                    <div class="flex-fill text-center py-2 text-uppercase extra-small fw-bold text-muted border-end" style="width: 14.28%;">Mon</div>
+                    <div class="flex-fill text-center py-2 text-uppercase extra-small fw-bold text-muted border-end" style="width: 14.28%;">Tue</div>
+                    <div class="flex-fill text-center py-2 text-uppercase extra-small fw-bold text-muted border-end" style="width: 14.28%;">Wed</div>
+                    <div class="flex-fill text-center py-2 text-uppercase extra-small fw-bold text-muted border-end" style="width: 14.28%;">Thu</div>
+                    <div class="flex-fill text-center py-2 text-uppercase extra-small fw-bold text-muted border-end" style="width: 14.28%;">Fri</div>
+                    <div class="flex-fill text-center py-2 text-uppercase extra-small fw-bold text-muted" style="width: 14.28%;">Sat</div>
+                </div>
+
+                <!-- Days -->
+                <div class="calendar-days d-flex flex-wrap" style="width: 100%;">
+                    {% set start_dow = date(year, month, 1).strftime('%w')|int %}
+                    {% for _ in range(start_dow) %}
+                        <div class="calendar-day empty border-end border-bottom bg-light bg-opacity-10" style="width: 14.28%; min-height: 120px;"></div>
+                    {% endfor %}
+
+                    {% for day, shifts in calendar_data.items() %}
+                        {% set is_holiday = day in holidays %}
+                        <div class="calendar-day border-end border-bottom p-2 {{ 'bg-danger bg-opacity-10' if is_holiday else '' }}" style="width: 14.28%; min-height: 120px; position: relative;">
+                            <div class="d-flex justify-content-between align-items-center mb-1">
+                                <span class="badge rounded-circle {{ 'bg-primary' if day == today.day and month == today.month and year == today.year else 'bg-light text-dark' }} d-flex align-items-center justify-content-center" style="width: 24px; height: 24px; font-size: 0.75rem;">{{ day }}</span>
+                                {% if is_holiday %}
+                                    <i class="bi bi-gift-fill text-danger" title="{{ holidays[day] }}" style="font-size: 0.8rem;"></i>
+                                {% endif %}
+                            </div>
+                            
+                            {% if is_holiday %}
+                                <div class="text-danger extra-small fw-bold text-truncate mb-1" style="font-size: 0.6rem;">{{ holidays[day] }}</div>
+                            {% endif %}
+
+                            <div class="shifts-list" style="max-height: 80px; overflow-y: auto;">
+                                {% for shift in shifts %}
+                                <div class="shift-item mb-1 p-1 rounded-1 extra-small border
+                                    {% if shift.shift_type == 'General' %}bg-secondary bg-opacity-10 border-secondary-subtle text-dark
+                                    {% elif shift.shift_type == 'Morning' %}bg-warning bg-opacity-10 border-warning-subtle text-dark
+                                    {% elif shift.shift_type == 'Noon' %}bg-info bg-opacity-10 border-info-subtle text-dark
+                                    {% elif shift.shift_type == 'Night' %}bg-dark text-white border-dark
+                                    {% endif %}" style="font-size: 0.65rem; line-height: 1;">
+                                    <div class="fw-bold text-truncate">{{ shift.employee.first_name[:8] }}</div>
+                                    <div class="opacity-75" style="font-size: 0.55rem;">{{ shift.shift_type[0] }}</div>
+                                </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    {% endfor %}
+                    
+                    {% set total_cells = start_dow + calendar_data|length %}
+                    {% set remaining = (7 - (total_cells % 7)) % 7 %}
+                    {% for _ in range(remaining) %}
+                        <div class="calendar-day empty border-end border-bottom bg-light bg-opacity-10" style="width: 14.28%; min-height: 120px;"></div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .extra-small { font-size: 0.7rem; }
+    .calendar-day:hover { background-color: #fcfcfc; }
+    .shifts-list::-webkit-scrollbar { width: 2px; }
+    .shifts-list::-webkit-scrollbar-thumb { background-color: #dee2e6; border-radius: 4px; }
+</style>
+{% endblock %}

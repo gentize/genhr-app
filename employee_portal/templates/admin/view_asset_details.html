@@ -1,0 +1,177 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb mb-1">
+                    <li class="breadcrumb-item"><a href="{{ url_for('admin.view_assets') }}">Assets</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">{{ asset.name }}</li>
+                </ol>
+            </nav>
+            <h2 class="fw-bold text-dark">{{ asset.name }}</h2>
+        </div>
+        <div class="d-flex gap-2">
+            <a href="{{ url_for('admin.edit_asset', asset_id=asset.id) }}" class="btn btn-primary rounded-pill px-4">
+                <i class="bi bi-pencil me-2"></i>Edit Asset
+            </a>
+        </div>
+    </div>
+
+    <div class="row g-4">
+        <!-- Main Details -->
+        <div class="col-lg-8">
+            <div class="card border-0 shadow-sm rounded-4 mb-4">
+                <div class="card-header bg-white py-3">
+                    <h5 class="mb-0 text-primary fw-bold">Specifications & Info</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row g-4">
+                        <div class="col-sm-6">
+                            <label class="text-muted small text-uppercase fw-bold">Brand & Model</label>
+                            <div class="fs-5 fw-medium text-dark">{{ asset.brand or '-' }} {{ asset.model_name or '' }}</div>
+                        </div>
+                        <div class="col-sm-6">
+                            <label class="text-muted small text-uppercase fw-bold">Serial Number</label>
+                            <div class="fs-5 fw-medium text-dark font-monospace">{{ asset.serial_number }}</div>
+                        </div>
+                        <div class="col-sm-4">
+                            <label class="text-muted small text-uppercase fw-bold">Category</label>
+                            <div class="fw-medium text-dark">{{ asset.category }}</div>
+                        </div>
+                        <div class="col-sm-4">
+                            <label class="text-muted small text-uppercase fw-bold">Condition</label>
+                            <div>
+                                <span class="badge bg-primary bg-opacity-10 text-primary rounded-pill px-3">
+                                    {{ asset.condition }}
+                                </span>
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <label class="text-muted small text-uppercase fw-bold">Current Status</label>
+                            <div>
+                                <span class="badge bg-primary rounded-pill px-3">{{ asset.status }}</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <hr class="my-4">
+
+                    <div class="row g-4">
+                        <div class="col-sm-4">
+                            <label class="text-muted small text-uppercase fw-bold">Purchase Date</label>
+                            <div class="fw-medium text-dark">{{ asset.purchase_date.strftime('%d %b %Y') if asset.purchase_date else 'N/A' }}</div>
+                        </div>
+                        <div class="col-sm-4">
+                            <label class="text-muted small text-uppercase fw-bold">Purchase Cost</label>
+                            <div class="fw-medium text-dark">₹{{ "{:,.2f}".format(asset.purchase_cost) if asset.purchase_cost else '0.00' }}</div>
+                        </div>
+                        <div class="col-sm-4">
+                            <label class="text-muted small text-uppercase fw-bold">Warranty Until</label>
+                            <div class="fw-medium text-{% if asset.warranty_expiry and asset.warranty_expiry < today %}danger{% else %}dark{% endif %}">
+                                {{ asset.warranty_expiry.strftime('%d %b %Y') if asset.warranty_expiry else 'N/A' }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Lifecycle History -->
+            <div class="card border-0 shadow-sm rounded-4">
+                <div class="card-header bg-white py-3">
+                    <h5 class="mb-0 text-primary fw-bold">Lifecycle History</h5>
+                </div>
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-hover mb-0">
+                            <thead class="bg-light text-muted extra-small text-uppercase">
+                                <tr>
+                                    <th class="ps-4">Date</th>
+                                    <th>Action</th>
+                                    <th>Assignee</th>
+                                    <th>Handled By</th>
+                                    <th class="pe-4">Notes</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for entry in history %}
+                                <tr>
+                                    <td class="ps-4 small">{{ entry.date_action.strftime('%d %b %Y %H:%M') }}</td>
+                                    <td>
+                                        <span class="badge bg-{% if entry.action == 'Assigned' %}primary{% elif entry.action == 'Returned' %}success{% else %}light text-dark{% endif %} px-2">
+                                            {{ entry.action }}
+                                        </span>
+                                    </td>
+                                    <td class="small fw-medium">
+                                        {% if entry.employee %}
+                                            {{ entry.employee.first_name }} {{ entry.employee.last_name }}
+                                        {% else %}
+                                            -
+                                        {% endif %}
+                                    </td>
+                                    <td class="small text-muted">{{ entry.performed_by }}</td>
+                                    <td class="small text-muted pe-4">{{ entry.notes or '-' }}</td>
+                                </tr>
+                                {% else %}
+                                <tr>
+                                    <td colspan="5" class="text-center py-4 text-muted small">No history recorded.</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sidebar Info -->
+        <div class="col-lg-4">
+            <div class="card border-0 shadow-sm rounded-4 mb-4">
+                <div class="card-header bg-white py-3">
+                    <h6 class="mb-0 fw-bold">Current Possession</h6>
+                </div>
+                <div class="card-body text-center py-4">
+                    {% if asset.assigned_to_id %}
+                        {% set emp = asset.assigned_employee %}
+                        <img src="{{ url_for('static', filename='img/' + (emp.image_file or 'default.jpg')) }}" class="rounded-circle shadow-sm mb-3" width="80" height="80" style="object-fit: cover;">
+                        <h5 class="fw-bold mb-1">{{ emp.first_name }} {{ emp.last_name }}</h5>
+                        <p class="text-muted small mb-3">{{ emp.user.employeeid }} • {{ emp.designation.title if emp.designation else 'Employee' }}</p>
+                        <a href="{{ url_for('admin.admin_view_employee_profile', employee_id=emp.id) }}" class="btn btn-sm btn-outline-primary rounded-pill px-4">View Profile</a>
+                    {% else %}
+                        <div class="py-3">
+                            <i class="bi bi-check-circle text-success display-4 mb-2"></i>
+                            <h6 class="fw-bold text-success">Available in Stock</h6>
+                            <p class="text-muted small">This asset is not currently assigned.</p>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="card border-0 shadow-sm rounded-4">
+                <div class="card-header bg-white py-3">
+                    <h6 class="mb-0 fw-bold">Vendor / Ownership</h6>
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <label class="text-muted extra-small text-uppercase fw-bold d-block">Owned By</label>
+                        <span class="fw-medium text-dark">
+                            {% if asset.vendor_ref %}
+                                <a href="{{ url_for('admin.view_vendor_details', vendor_id=asset.vendor_id) }}" class="text-decoration-none">
+                                    {{ asset.vendor_ref.name }}
+                                </a>
+                            {% else %}
+                                {{ asset.owned_by or 'Gentize' }}
+                            {% endif %}
+                        </span>
+                    </div>
+                    <div>
+                        <label class="text-muted extra-small text-uppercase fw-bold d-block">System Entry Date</label>
+                        <span class="text-dark small">{{ asset.created_at.strftime('%d %b %Y') }}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

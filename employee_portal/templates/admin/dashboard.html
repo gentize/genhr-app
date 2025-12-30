@@ -1,0 +1,282 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container-fluid py-4 wow-dashboard-bg">
+    <!-- Top Welcome Card - Elegant Orange Style -->
+    <div class="card elegant-orange-header border-0 mb-3">
+        <div class="card-body py-4 px-4 d-flex justify-content-between align-items-center">
+            <div>
+                <h4 class="fw-bold mb-1">Dashboard</h4>
+                <div class="greeting-text">
+                    <span id="time-greeting">Welcome</span>, {{ current_user.profile.first_name if current_user.profile else 'Admin' }}!
+                </div>
+            </div>
+            <div class="text-end d-none d-md-block">
+                <h5 class="fw-bold mb-0">{{ today.strftime('%d %B %Y') }}</h5>
+                <small class="opacity-75">{{ today.strftime('%A') }}</small>
+            </div>
+        </div>
+    </div>
+
+    <!-- Organisation Overview Widgets (Gradient Themes) -->
+    <div class="mb-4">
+        <h6 class="fw-bold text-dark mb-2 px-1 extra-small opacity-75">Organisation Overview</h6>
+        <div class="row g-2">
+            <!-- Total Employees -->
+            <div class="col-xl-3 col-md-6">
+                <a href="{{ url_for('admin.view_employees') }}" class="text-decoration-none">
+                    <div class="card wow-glass-card stat-card wow-orange h-100 shadow-sm">
+                        <div class="card-body">
+                            <div>
+                                <div class="stat-label">Total Employees</div>
+                                <div class="stat-value">{{ total_employees }}</div>
+                            </div>
+                            <div class="icon-box">
+                                <i class="bi bi-people-fill"></i>
+                            </div>
+                        </div>
+                    </div>
+                </a>
+            </div>
+
+            <!-- Present Today -->
+            <div class="col-xl-3 col-md-6">
+                <a href="{{ url_for('admin.present_today') }}" class="text-decoration-none">
+                    <div class="card wow-glass-card stat-card wow-green h-100 shadow-sm">
+                        <div class="card-body">
+                            <div>
+                                <div class="stat-label">Present Today</div>
+                                <div class="stat-value">{{ present_today }}</div>
+                            </div>
+                            <div class="icon-box">
+                                <i class="bi bi-person-check-fill"></i>
+                            </div>
+                        </div>
+                    </div>
+                </a>
+            </div>
+
+            <!-- On Leave -->
+            <div class="col-xl-3 col-md-6">
+                <a href="{{ url_for('admin.on_leave_today') }}" class="text-decoration-none">
+                    <div class="card wow-glass-card stat-card wow-yellow h-100 shadow-sm">
+                        <div class="card-body">
+                            <div>
+                                <div class="stat-label">On Leave</div>
+                                <div class="stat-value">{{ leave_today }}</div>
+                            </div>
+                            <div class="icon-box">
+                                <i class="bi bi-person-dash-fill"></i>
+                            </div>
+                        </div>
+                    </div>
+                </a>
+            </div>
+
+            <!-- Pending Tasks Widget (New) -->
+            <div class="col-xl-3 col-md-6">
+                <a href="{{ url_for('admin.manage_tasks') }}" class="text-decoration-none">
+                    <div class="card wow-glass-card stat-card wow-primary h-100 shadow-sm">
+                        <div class="card-body">
+                            <div>
+                                <div class="stat-label">Pending Tasks</div>
+                                <div class="stat-value">{{ pending_task_count }}</div>
+                            </div>
+                            <div class="icon-box">
+                                <i class="bi bi-list-task"></i>
+                            </div>
+                        </div>
+                    </div>
+                </a>
+            </div>
+
+            <!-- Expense Claims Widget -->
+            <div class="col-xl-3 col-md-6">
+                <a href="{{ url_for('admin.manage_expenses') }}" class="text-decoration-none">
+                    <div class="card wow-glass-card stat-card wow-teal h-100 shadow-sm">
+                        <div class="card-body">
+                            <div>
+                                <div class="stat-label">Expense Claims</div>
+                                <div class="stat-value">{{ expense_count }}</div>
+                            </div>
+                            <div class="icon-box">
+                                <i class="bi bi-receipt"></i>
+                            </div>
+                        </div>
+                    </div>
+                </a>
+            </div>
+
+            <!-- Assets -->
+            <div class="col-xl-3 col-md-6">
+                <a href="{{ url_for('admin.view_assets') }}" class="text-decoration-none">
+                    <div class="card wow-glass-card stat-card wow-blue h-100 shadow-sm">
+                        <div class="card-body">
+                            <div>
+                                <div class="stat-label">Total Assets</div>
+                                <div class="stat-value">{{ assets_count }}</div>
+                            </div>
+                            <div class="icon-box">
+                                <i class="bi bi-pc-display"></i>
+                            </div>
+                        </div>
+                    </div>
+                </a>
+            </div>
+
+            <!-- Vendors -->
+            <div class="col-xl-3 col-md-6">
+                <a href="{{ url_for('admin.view_vendors') }}" class="text-decoration-none">
+                    <div class="card wow-glass-card stat-card wow-purple h-100 shadow-sm">
+                        <div class="card-body">
+                            <div>
+                                <div class="stat-label">Vendors</div>
+                                <div class="stat-value">{{ vendors_count }}</div>
+                            </div>
+                            <div class="icon-box">
+                                <i class="bi bi-shop"></i>
+                            </div>
+                        </div>
+                    </div>
+                </a>
+            </div>
+
+            <!-- Approvals -->
+            <div class="col-xl-3 col-md-6">
+                <a href="{{ url_for('main.leave_requests') }}" class="text-decoration-none">
+                    <div class="card wow-glass-card stat-card wow-red h-100 shadow-sm">
+                        <div class="card-body">
+                            <div>
+                                <div class="stat-label">Pending Approvals</div>
+                                <div class="stat-value">{{ approvals_count }}</div>
+                            </div>
+                            <div class="icon-box">
+                                <i class="bi bi-clock-history"></i>
+                            </div>
+                        </div>
+                    </div>
+                </a>
+            </div>
+
+            <!-- Birthdays -->
+            <div class="col-xl-3 col-md-6">
+                <a href="{{ url_for('admin.birthdays') }}" class="text-decoration-none">
+                    <div class="card wow-glass-card stat-card wow-navy h-100 shadow-sm">
+                        <div class="card-body">
+                            <div>
+                                <div class="stat-label">Birthdays Today</div>
+                                <div class="stat-value">{{ birthdays_count }}</div>
+                            </div>
+                            <div class="icon-box">
+                                <i class="bi bi-gift-fill"></i>
+                            </div>
+                        </div>
+                    </div>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick Action Section (Moved Below and Resized) -->
+    <div class="mb-3">
+        <h6 class="fw-bold text-dark mb-2 px-1 extra-small opacity-75">Quick Action</h6>
+        <div class="row g-2">
+            <div class="col-md-6 col-xl-3">
+                <a href="{{ url_for('main.attendance') }}" class="text-decoration-none">
+                    <div class="card wow-glass-card quick-stat-card wow-info h-100 shadow-sm">
+                        <div class="card-body">
+                            <div class="stat-label text-white">Attendance</div>
+                            <div class="icon-box">
+                                <i class="bi bi-file-earmark-spreadsheet"></i>
+                            </div>
+                        </div>
+                    </div>
+                </a>
+            </div>
+            <div class="col-md-6 col-xl-3">
+                <a href="{{ url_for('admin.add_employee') }}" class="text-decoration-none">
+                    <div class="card wow-glass-card quick-stat-card wow-orange h-100 shadow-sm">
+                        <div class="card-body">
+                            <div class="stat-label text-white">Onboard</div>
+                            <div class="icon-box">
+                                <i class="bi bi-person-plus-fill"></i>
+                            </div>
+                        </div>
+                    </div>
+                </a>
+            </div>
+            <div class="col-md-6 col-xl-3">
+                <a href="{{ url_for('admin.departments') }}" class="text-decoration-none">
+                    <div class="card wow-glass-card quick-stat-card wow-teal h-100 shadow-sm">
+                        <div class="card-body">
+                            <div class="stat-label text-white">Departments</div>
+                            <div class="icon-box">
+                                <i class="bi bi-building"></i>
+                            </div>
+                        </div>
+                    </div>
+                </a>
+            </div>
+            <div class="col-md-6 col-xl-3">
+                <a href="{{ url_for('admin.manage_holidays') }}" class="text-decoration-none">
+                    <div class="card wow-glass-card quick-stat-card wow-yellow h-100 shadow-sm">
+                        <div class="card-body">
+                            <div class="stat-label text-white">Holidays</div>
+                            <div class="icon-box">
+                                <i class="bi bi-calendar-event"></i>
+                            </div>
+                        </div>
+                    </div>
+                </a>
+            </div>
+            <div class="col-md-6 col-xl-3">
+                <a href="{{ url_for('admin.manage_payroll') }}" class="text-decoration-none">
+                    <div class="card wow-glass-card quick-stat-card wow-green h-100 shadow-sm">
+                        <div class="card-body">
+                            <div class="stat-label text-white">Payroll</div>
+                            <div class="icon-box">
+                                <i class="bi bi-cash-stack"></i>
+                            </div>
+                        </div>
+                    </div>
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .extra-small { font-size: 0.65rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; }
+    
+    .wow-dashboard-bg {
+        background-color: #f8f9fa !important; 
+        min-height: calc(100vh - 70px);
+        border-radius: 20px;
+    }
+
+    .quick-action-card {
+        background: #ffffff;
+        border-radius: 12px;
+        transition: all 0.3s ease;
+    }
+
+    .quick-action-card:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 5px 15px rgba(0,0,0,0.05) !important;
+    }
+</style>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        // Time-based Greeting Logic
+        const hour = new Date().getHours();
+        let greeting = "Good Morning";
+        if (hour >= 12 && hour < 17) greeting = "Good Afternoon";
+        else if (hour >= 17 && hour < 21) greeting = "Good Evening";
+        else if (hour >= 21 || hour < 5) greeting = "Good Night";
+
+        const dashGreet = document.getElementById('time-greeting');
+        if (dashGreet) dashGreet.innerText = greeting;
+    });
+</script>
+{% endblock %}

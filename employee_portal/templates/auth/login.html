@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+{% import 'bootstrap/wtf.html' as wtf %}
+
+{% block content %}
+<div class="container login-container" id="login-container">
+    <img src="{{ url_for('static', filename='img/think.PNG') }}" alt="Think Image" class="think-image">
+    <div class="row w-100 justify-content-center align-items-center">
+        <div class="col-12 col-md-6 col-lg-8 d-none d-md-flex flex-column justify-content-center align-items-center">
+            <img src="{{ url_for('static', filename='img/GenHR_LOGO.PNG') }}" alt="GenHR Logo" class="img-fluid mb-3" style="max-width: 80%; margin-top: 80px;">
+            <div class="text-center mt-5 text-muted">
+                &copy; 2025 Gentize Innovations Private Ltd.
+            </div>
+        </div>
+        <div class="col-12 col-md-6 col-lg-4">
+            <div class="card shadow-lg p-3">
+                <div class="card-body">
+                    <div class="text-center mb-4">
+                        <img src="{{ url_for('static', filename='img/logo.PNG') }}" alt="Company Logo" class="img-fluid" style="max-width: 150px;">
+                    </div>
+                    <form method="POST" action="{{ url_for('auth.login') }}">
+                        {{ form.hidden_tag() }}
+                        <div class="mb-3">
+                            {{ form.employeeid.label(class="form-label") }}
+                            {{ form.employeeid(class="form-control") }}
+                            {% for error in form.employeeid.errors %}
+                                <div class="invalid-feedback d-block">{{ error }}</div>
+                            {% endfor %}
+                        </div>
+                        <div class="mb-3">
+                            {{ form.password.label(class="form-label") }}
+                            {{ form.password(class="form-control") }}
+                            {% for error in form.password.errors %}
+                                <div class="invalid-feedback d-block">{{ error }}</div>
+                            {% endfor %}
+                        </div>
+                        <div class="mb-3 form-check">
+                            {{ form.remember_me(class="form-check-input") }}
+                            {{ form.remember_me.label(class="form-check-label") }}
+                        </div>
+                        {{ form.submit(class="btn btn-primary w-100") }}
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

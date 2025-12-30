@@ -1,0 +1,18 @@
+[
+  {
+    "id": "1b9d6bcd-bbfd-4b2d-9b5d-ab8dfbbd4bed",
+    "name": "John Doe",
+    "email": "john.doe@example.com",
+    "phone": "123-456-7890",
+    "jobTitle": "Software Engineer",
+    "avatarUrl": "https://robohash.org/john.doe@example.com.png?size=200x200&set=set4"
+  },
+  {
+    "id": "bbfd-1b9d6bcd-4b2d-9b5d-ab8dfbbd4bed",
+    "name": "Jane Smith",
+    "email": "jane.smith@example.com",
+    "phone": "098-765-4321",
+    "jobTitle": "Project Manager",
+    "avatarUrl": "https://robohash.org/jane.smith@example.com.png?size=200x200&set=set4"
+  }
+]

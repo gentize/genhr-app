@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-6">
+            <div class="mb-4">
+                <h3 class="fw-bold text-dark">{{ title }}</h3>
+                <p class="text-muted small">Upload a new authorized signature.</p>
+            </div>
+
+            <div class="card border-0 shadow-sm rounded-4" style="border: 1px solid #e2e8f0 !important;">
+                <div class="card-body p-4">
+                    <form method="POST" action="" enctype="multipart/form-data">
+                        {{ form.hidden_tag() }}
+                        
+                        <div class="mb-3">
+                            <label class="form-label small fw-semibold text-secondary text-uppercase">Name of Signatory</label>
+                            {{ form.name(class="form-control shadow-none border-light bg-light rounded-3 py-2") }}
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label small fw-semibold text-secondary text-uppercase">Designation</label>
+                            {{ form.designation(class="form-control shadow-none border-light bg-light rounded-3 py-2") }}
+                        </div>
+                        <div class="mb-4">
+                            <label class="form-label small fw-semibold text-secondary text-uppercase">Signature Image (PNG/JPG)</label>
+                            {{ form.file(class="form-control shadow-none border-light bg-light rounded-3 py-2") }}
+                            <div class="form-text extra-small text-muted">Upload a clear image of the signature with a transparent or white background.</div>
+                        </div>
+
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-primary rounded-pill fw-bold shadow-sm">Upload Signature</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

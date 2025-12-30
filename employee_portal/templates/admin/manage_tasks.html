@@ -1,0 +1,258 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <div class="mb-4">
+        <h3 class="fw-bold text-dark">Task List</h3>
+        <p class="text-muted small">Master tasks for onboarding, offboarding, and general operations.</p>
+    </div>
+
+    <div class="row">
+        <!-- Add Task Column -->
+        <div class="col-md-4 mb-4">
+            <div class="card border-0 shadow-sm rounded-4" style="border: 1px solid #e2e8f0 !important;">
+                <div class="card-header bg-white py-3 border-0 rounded-top-4" style="border-left: 4px solid #e67e22 !important;">
+                    <h6 class="m-0 fw-semibold text-dark"><i class="bi bi-plus-circle me-2 text-primary"></i>Add Task</h6>
+                </div>
+                <div class="card-body p-4">
+                    <form method="POST" action="">
+                        {{ form.hidden_tag() }}
+                        <div class="mb-3">
+                            <label class="form-label small fw-semibold text-secondary text-uppercase" style="letter-spacing: 0.5px;">Task Description</label>
+                            {{ form.description(class="form-control shadow-none border-light bg-light rounded-3 py-2", rows=3) }}
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label small fw-semibold text-secondary text-uppercase" style="letter-spacing: 0.5px;">Type</label>
+                            {{ form.task_type(class="form-select shadow-none border-light bg-light rounded-3 py-2", id="typeSelect") }}
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label small fw-semibold text-secondary text-uppercase" style="letter-spacing: 0.5px;">Priority</label>
+                            {{ form.priority(class="form-select shadow-none border-light bg-light rounded-3 py-2") }}
+                        </div>
+                        <div class="mb-3" id="otherTypeGroup" style="display: none;">
+                            <label class="form-label small fw-semibold text-secondary text-uppercase" style="letter-spacing: 0.5px;">Other Type Details</label>
+                            {{ form.other_type_name(class="form-control shadow-none border-light bg-light rounded-3 py-2", placeholder="e.g. Health & Safety") }}
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label small fw-semibold text-secondary text-uppercase" style="letter-spacing: 0.5px;">Responsible Role</label>
+                            {{ form.assigned_role(class="form-select shadow-none border-light bg-light rounded-3 py-2", id="roleSelect") }}
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label small fw-semibold text-secondary text-uppercase" style="letter-spacing: 0.5px;">Target Date</label>
+                            {{ form.target_date(class="form-control shadow-none border-light bg-light rounded-3 py-2", type="date") }}
+                        </div>
+                        <div class="mb-4">
+                            <label class="form-label small fw-semibold text-secondary text-uppercase" style="letter-spacing: 0.5px;">Task Add To</label>
+                            {{ form.task_add_to(class="form-select shadow-none border-light bg-light rounded-3 py-2", id="employeeSelect") }}
+                            <div class="form-text extra-small opacity-75 mt-2">Filter employees by selecting a role first.</div>
+                        </div>
+
+                        <div class="d-grid pt-2">
+                            <button type="submit" class="btn btn-primary rounded-pill py-2 fw-semibold shadow-sm">
+                                <i class="bi bi-save me-2"></i>Save Task
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Master List Column -->
+        <div class="col-md-8">
+            <div class="card border-0 shadow-sm rounded-4" style="border: 1px solid #e2e8f0 !important;">
+                <div class="card-header bg-white py-3 border-0 rounded-top-4" style="border-left: 4px solid #e67e22 !important;">
+                    <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
+                        <div class="d-flex align-items-center">
+                            <h6 class="m-0 fw-semibold text-dark"><i class="bi bi-ticket-detailed me-2 text-primary"></i>Task Tickets</h6>
+                            <span class="badge bg-light text-secondary border rounded-pill ms-2">Total: {{ tasks.total }}</span>
+                        </div>
+                        <form action="{{ url_for('admin.manage_tasks') }}" method="GET" class="d-flex align-items-center">
+                            <select name="status_filter" class="form-select form-select-sm shadow-none border-light bg-light rounded-pill me-2" style="width: auto;" onchange="this.form.submit()">
+                                <option value="">All Status</option>
+                                <option value="Assigned" {% if status_filter == 'Assigned' %}selected{% endif %}>Assigned</option>
+                                <option value="YTS" {% if status_filter == 'YTS' %}selected{% endif %}>YTS</option>
+                                <option value="WIP" {% if status_filter == 'WIP' %}selected{% endif %}>WIP</option>
+                                <option value="Completed" {% if status_filter == 'Completed' %}selected{% endif %}>Completed</option>
+                                <option value="Rejected" {% if status_filter == 'Rejected' %}selected{% endif %}>Rejected</option>
+                            </select>
+                        </form>
+                    </div>
+                </div>
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle mb-0">
+                            <thead class="bg-light text-muted extra-small text-uppercase">
+                                <tr>
+                                    <th class="ps-4">
+                                        Ticket ID
+                                        <div class="fw-normal text-muted" style="font-size: 0.6rem; text-transform: none;">(Click for details)</div>
+                                    </th>
+                                    <th>Status</th>
+                                    <th>Priority</th>
+                                    <th>Description</th>
+                                    <th>Assigned To</th>
+                                    <th>Target Date</th>
+                                    <th class="pe-4 text-end">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for task in tasks.items %}
+                                <tr>
+                                    <td class="ps-4">
+                                        <a href="{{ url_for('admin.view_task_details', task_id=task.id) }}" class="fw-bold text-primary text-decoration-none ticket-link" title="View Full Ticket Details">
+                                            {{ task.task_no or 'T-' ~ task.id }}
+                                        </a>
+                                    </td>
+                                    <td>
+                                        <span class="badge rounded-pill extra-small px-2 py-1 
+                                            {% if task.status == 'Completed' %}bg-success-subtle text-success
+                                            {% elif task.status == 'WIP' %}bg-info-subtle text-info
+                                            {% elif task.status == 'Rejected' %}bg-danger-subtle text-danger
+                                            {% else %}bg-secondary-subtle text-secondary{% endif %}">
+                                            {{ task.status }}
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <span class="fw-bold extra-small" style="color: 
+                                            {% if task.priority == 'High' %}#dc3545
+                                            {% elif task.priority == 'Medium' %}#e67e22
+                                            {% else %}#ffc107{% endif %};">
+                                            <i class="bi bi-circle-fill me-1" style="font-size: 0.5rem;"></i>{{ task.priority }}
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <div class="text-dark small fw-medium text-truncate" style="max-width: 250px;" title="{{ task.description }}">{{ task.description }}</div>
+                                        <div class="text-muted extra-small">{{ task.task_type }}</div>
+                                    </td>
+                                    <td>
+                                        <div class="d-flex align-items-center">
+                                            {% if task.task_add_to %}
+                                                <div class="avatar-circle sm bg-primary text-white rounded-circle d-flex align-items-center justify-content-center me-2" style="width: 28px; height: 28px; font-size: 0.75rem;">
+                                                    {{ task.task_add_to.first_name[0] }}{{ task.task_add_to.last_name[0] }}
+                                                </div>
+                                                <div>
+                                                    <div class="text-dark small fw-semibold lh-1">{{ task.task_add_to.first_name }} {{ task.task_add_to.last_name }}</div>
+                                                    <div class="text-muted extra-small lh-1">{{ task.assigned_role.name if task.assigned_role else 'Role N/A' }}</div>
+                                                </div>
+                                            {% else %}
+                                                <div class="avatar-circle sm bg-secondary text-white rounded-circle d-flex align-items-center justify-content-center me-2" style="width: 28px; height: 28px; font-size: 0.75rem;">
+                                                    <i class="bi bi-people-fill"></i>
+                                                </div>
+                                                <div>
+                                                    <div class="text-dark small fw-semibold lh-1">All {{ task.assigned_role.name if task.assigned_role else 'Members' }}</div>
+                                                    <div class="text-muted extra-small lh-1">Group Task</div>
+                                                </div>
+                                            {% endif %}
+                                        </div>
+                                    </td>
+                                    <td class="small text-muted">
+                                        {{ task.target_date.strftime('%d %b %Y') if task.target_date else '-' }}
+                                    </td>
+                                    <td class="pe-4 text-end">
+                                        <form action="{{ url_for('admin.delete_task', task_id=task.id) }}" method="POST">
+                                            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                            <button type="submit" class="btn btn-sm btn-light text-danger rounded-circle shadow-sm" onclick="return confirm('Delete this ticket?');" style="width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; float: right;" title="Delete Ticket">
+                                                <i class="bi bi-trash"></i>
+                                            </button>
+                                        </form>
+                                    </td>
+                                </tr>
+                                {% else %}
+                                <tr><td colspan="5" class="text-center py-5 text-muted">No tickets found.</td></tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <!-- Pagination -->
+                <div class="card-footer bg-white border-0 py-3 rounded-bottom-4">
+                    <nav aria-label="Task pagination">
+                        <ul class="pagination justify-content-center mb-0 pagination-sm">
+                            {% if tasks.has_prev %}
+                            <li class="page-item">
+                                <a class="page-link border-0 text-dark shadow-none" href="{{ url_for('admin.manage_tasks', page=tasks.prev_num, status_filter=status_filter) }}">
+                                    <i class="bi bi-chevron-left"></i>
+                                </a>
+                            </li>
+                            {% else %}
+                            <li class="page-item disabled">
+                                <span class="page-link border-0 text-muted shadow-none"><i class="bi bi-chevron-left"></i></span>
+                            </li>
+                            {% endif %}
+
+                            {% for page_num in tasks.iter_pages(left_edge=1, right_edge=1, left_current=1, right_current=1) %}
+                                {% if page_num %}
+                                    {% if tasks.page == page_num %}
+                                    <li class="page-item active">
+                                        <span class="page-link border-0 bg-primary shadow-sm rounded-circle mx-1">{{ page_num }}</span>
+                                    </li>
+                                    {% else %}
+                                    <li class="page-item">
+                                        <a class="page-link border-0 text-dark shadow-none rounded-circle mx-1" href="{{ url_for('admin.manage_tasks', page=page_num, status_filter=status_filter) }}">{{ page_num }}</a>
+                                    </li>
+                                    {% endif %}
+                                {% else %}
+                                <li class="page-item disabled">
+                                    <span class="page-link border-0 text-muted shadow-none">...</span>
+                                </li>
+                                {% endif %}
+                            {% endfor %}
+
+                            {% if tasks.has_next %}
+                            <li class="page-item">
+                                <a class="page-link border-0 text-dark shadow-none" href="{{ url_for('admin.manage_tasks', page=tasks.next_num, status_filter=status_filter) }}">
+                                    <i class="bi bi-chevron-right"></i>
+                                </a>
+                            </li>
+                            {% else %}
+                            <li class="page-item disabled">
+                                <span class="page-link border-0 text-muted shadow-none"><i class="bi bi-chevron-right"></i></span>
+                            </li>
+                            {% endif %}
+                        </ul>
+                    </nav>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// Toggle 'Other' details field
+document.getElementById('typeSelect').addEventListener('change', function() {
+    const otherGroup = document.getElementById('otherTypeGroup');
+    if (this.value === 'Others') {
+        otherGroup.style.display = 'block';
+    } else {
+        otherGroup.style.display = 'none';
+    }
+});
+
+document.getElementById('roleSelect').addEventListener('change', function() {
+    const roleId = this.value;
+    const empSelect = document.getElementById('employeeSelect');
+    
+    // Clear current options
+    empSelect.innerHTML = '<option value="">All Role Members</option>';
+    
+    if (!roleId) return;
+
+    fetch(`/admin/api/employees_by_role/${roleId}`)
+        .then(response => response.json())
+        .then(data => {
+            data.forEach(emp => {
+                const option = document.createElement('option');
+                option.value = emp.id;
+                option.textContent = emp.name;
+                empSelect.appendChild(option);
+            });
+        })
+        .catch(err => console.error('Error fetching employees:', err));
+});
+</script>
+
+<style>
+    .extra-small { font-size: 0.7rem; }
+    .rounded-top-4 { border-top-left-radius: 12px !important; border-top-right-radius: 12px !important; }
+</style>
+{% endblock %}

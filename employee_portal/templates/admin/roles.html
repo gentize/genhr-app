@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+        <div>
+            <h3 class="fw-bold text-dark mb-0">Role Management</h3>
+            <p class="text-muted small">Configure system access levels and permissions.</p>
+        </div>
+        <a href="{{ url_for('admin.add_role') }}" class="btn btn-sm btn-primary rounded-pill px-4 fw-semibold shadow-sm">
+            <i class="bi bi-plus-lg me-2"></i>Create New Role
+        </a>
+    </div>
+
+    <div class="card border-0 shadow-sm rounded-4 overflow-hidden" style="border: 1px solid #e2e8f0 !important;">
+        <div class="card-header bg-white py-3 border-0 rounded-top-4" style="border-left: 4px solid #e67e22 !important;">
+            <h6 class="m-0 fw-semibold text-dark"><i class="bi bi-shield-check me-2 text-primary"></i>System Roles</h6>
+        </div>
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead class="bg-light text-muted extra-small text-uppercase">
+                        <tr>
+                            <th class="ps-4 py-3">Role Name</th>
+                            <th>Permissions Count</th>
+                            <th class="pe-4 text-end">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for role in roles %}
+                        <tr>
+                            <td class="ps-4 fw-bold text-dark">{{ role.name }}</td>
+                            <td>
+                                <span class="text-primary fw-semibold extra-small">
+                                    {{ role.permissions.split(',')|length if role.permissions else 0 }} Modules Enabled
+                                </span>
+                            </td>
+                            <td class="pe-4 text-end">
+                                <div class="d-flex justify-content-end gap-2">
+                                    <a href="{{ url_for('admin.edit_role', role_id=role.id) }}" class="btn btn-sm btn-light text-secondary rounded-circle shadow-sm" style="width: 32px; height: 32px; display: flex; align-items: center; justify-content: center;">
+                                        <i class="bi bi-pencil-fill"></i>
+                                    </a>
+                                    <form action="{{ url_for('admin.delete_role', role_id=role.id) }}" method="POST">
+                                        <button type="submit" class="btn btn-sm btn-light text-danger rounded-circle shadow-sm" onclick="return confirm('Delete this role permanently?');" style="width: 32px; height: 32px; display: flex; align-items: center; justify-content: center;">
+                                            <i class="bi bi-trash-fill"></i>
+                                        </button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .extra-small { font-size: 0.7rem; }
+    .rounded-top-4 { border-top-left-radius: 12px !important; border-top-right-radius: 12px !important; }
+</style>
+{% endblock %}

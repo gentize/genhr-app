@@ -1,0 +1,159 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <div class="mb-4">
+        <h3 class="fw-bold text-dark">Release Offer Letter</h3>
+        <p class="text-muted small">Generate and release offer letters for employees.</p>
+    </div>
+
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-6">
+            <div class="card border-0 shadow-sm rounded-4" style="border: 1px solid #e2e8f0 !important;">
+                <div class="card-header bg-white py-3 border-0 rounded-top-4" style="border-left: 4px solid #e67e22 !important;">
+                    <h6 class="m-0 fw-semibold text-dark"><i class="bi bi-file-earmark-text me-2 text-primary"></i>Generate Offer Letter</h6>
+                </div>
+                <div class="card-body p-4">
+                    <form method="POST" action="{{ url_for('admin.release_offer') }}" id="releaseOfferForm">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                        
+                        <div class="mb-4">
+                            <label class="form-label small fw-semibold text-secondary text-uppercase">Select Employee</label>
+                            <select name="employee_id" id="employeeSelect" class="form-select shadow-none border-light bg-light rounded-3 py-2" required>
+                                <option value="" disabled selected>-- Choose an Employee --</option>
+                                {% for employee in employees %}
+                                <option value="{{ employee.id }}" 
+                                        data-has-offer="{{ 'true' if employee.id in offer_map else 'false' }}"
+                                        data-employee-name="{{ employee.first_name }} {{ employee.last_name }}">
+                                    {{ employee.first_name }} {{ employee.last_name }} ({{ employee.user.employeeid }})
+                                    {% if employee.id in offer_map %} &#10003;{% endif %}
+                                </option>
+                                {% endfor %}
+                            </select>
+                            <div class="form-text extra-small opacity-75 mt-2">
+                                <i class="bi bi-info-circle me-1"></i> Ensure the employee has a valid profile and salary structure before releasing.
+                            </div>
+                        </div>
+
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-primary rounded-pill py-2 fw-semibold shadow-sm">
+                                <i class="bi bi-send me-2"></i>Release Offer
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Released Offer Letters List -->
+    <div class="row justify-content-center mt-5">
+        <div class="col-md-10">
+            <h5 class="fw-bold text-dark mb-3">Released Offer Letters</h5>
+            <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle mb-0">
+                        <thead class="bg-light">
+                            <tr>
+                                <th class="border-0 small text-uppercase text-secondary fw-bold ps-4">Employee</th>
+                                <th class="border-0 small text-uppercase text-secondary fw-bold">Document</th>
+                                <th class="border-0 small text-uppercase text-secondary fw-bold">Released Date</th>
+                                <th class="border-0 small text-uppercase text-secondary fw-bold text-end pe-4">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% if offer_map %}
+                                {% for emp_id, doc in offer_map.items() %}
+                                <tr>
+                                    <td class="ps-4">
+                                        <div class="fw-bold text-dark">{{ doc.employee.first_name }} {{ doc.employee.last_name }}</div>
+                                        <div class="extra-small text-muted">{{ doc.employee.user.employeeid }}</div>
+                                    </td>
+                                    <td>
+                                        <div class="badge bg-light text-dark border">{{ doc.title }}</div>
+                                    </td>
+                                    <td class="small text-muted">
+                                        {{ doc.upload_date.strftime('%d %b %Y') if doc.upload_date else 'N/A' }}
+                                    </td>
+                                    <td class="text-end pe-4">
+                                        <a href="{{ url_for('static', filename='documents/' ~ doc.file_path) }}" target="_blank" class="btn btn-sm btn-outline-primary rounded-pill px-3">
+                                            <i class="bi bi-eye me-1"></i>View
+                                        </a>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            {% else %}
+                                <tr>
+                                    <td colspan="4" class="text-center py-4 text-muted small">No offer letters released yet.</td>
+                                </tr>
+                            {% endif %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const form = document.getElementById('releaseOfferForm');
+        const select = document.getElementById('employeeSelect');
+        const confirmModal = new bootstrap.Modal(document.getElementById('confirmReleaseModal'));
+        const confirmSubmitBtn = document.getElementById('confirmSubmitBtn');
+        const confirmMessage = document.getElementById('confirmMessage');
+
+        form.addEventListener('submit', function(e) {
+            const selectedOption = select.options[select.selectedIndex];
+            if (!selectedOption) return;
+
+            const hasOffer = selectedOption.getAttribute('data-has-offer') === 'true';
+            const employeeName = selectedOption.getAttribute('data-employee-name');
+
+            if (hasOffer) {
+                e.preventDefault(); // Stop immediate submission
+                confirmMessage.innerText = `Offer letter already released for this employee ${employeeName}, do you want to release again?`;
+                confirmModal.show();
+            }
+        });
+
+        confirmSubmitBtn.addEventListener('click', function() {
+            form.submit(); // Manually submit after confirmation
+        });
+    });
+</script>
+
+<!-- Confirmation Modal (Theme: Elegant Orange) -->
+<div class="modal fade" id="confirmReleaseModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 shadow-lg rounded-4 overflow-hidden">
+            <div class="modal-header elegant-orange-header border-0 py-3">
+                <h5 class="modal-title fw-bold text-white mb-0">
+                    <i class="bi bi-exclamation-triangle-fill me-2"></i>Confirmation
+                </h5>
+                <button type="button" class="btn-close btn-close-white shadow-none" data-bs-modal="dismiss" data-bs-target="#confirmReleaseModal" onclick="bootstrap.Modal.getInstance(document.getElementById('confirmReleaseModal')).hide();" aria-label="Close"></button>
+            </div>
+            <div class="modal-body p-4 text-center">
+                <div class="mb-3">
+                    <i class="bi bi-file-earmark-pdf text-primary" style="font-size: 3rem; opacity: 0.2;"></i>
+                </div>
+                <p id="confirmMessage" class="mb-0 text-dark fw-medium fs-6"></p>
+            </div>
+            <div class="modal-footer border-0 pb-4 justify-content-center">
+                <button type="button" class="btn btn-light rounded-pill px-4 fw-bold text-secondary shadow-sm" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" id="confirmSubmitBtn" class="btn btn-primary rounded-pill px-4 fw-bold shadow-sm">Yes, Release Again</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .extra-small { font-size: 0.7rem; }
+    .rounded-top-4 { border-top-left-radius: 12px !important; border-top-right-radius: 12px !important; }
+    
+    /* Ensure modal header matches dashboard style */
+    .elegant-orange-header {
+        background: linear-gradient(135deg, #e67e22 0%, #f39c12 100%) !important;
+    }
+</style>
+{% endblock %}

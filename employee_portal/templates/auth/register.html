@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+{% import 'bootstrap/wtf.html' as wtf %}
+
+{% block content %}
+<div class="container login-container">
+    <div class="row w-100 justify-content-center align-items-center">
+        <div class="col-12 col-md-6 col-lg-5">
+            <div class="card shadow-lg p-4">
+                <div class="card-body">
+                    <h2 class="text-center mb-4 text-primary">GenHR</h2>
+                    <h3 class="text-center mb-4">Register</h3>
+                    <form method="POST" action="{{ url_for('auth.register') }}">
+                        {{ form.hidden_tag() }}
+                        <div class="mb-3">
+                            {{ form.employeeid.label(class="form-label") }}
+                            {{ form.employeeid(class="form-control") }}
+                            {% for error in form.employeeid.errors %}
+                                <div class="invalid-feedback d-block">{{ error }}</div>
+                            {% endfor %}
+                        </div>
+                        <div class="mb-3">
+                            {{ form.email.label(class="form-label") }}
+                            {{ form.email(class="form-control") }}
+                            {% for error in form.email.errors %}
+                                <div class="invalid-feedback d-block">{{ error }}</div>
+                            {% endfor %}
+                        </div>
+                        <div class="mb-3">
+                            {{ form.password.label(class="form-label") }}
+                            {{ form.password(class="form-control") }}
+                            {% for error in form.password.errors %}
+                                <div class="invalid-feedback d-block">{{ error }}</div>
+                            {% endfor %}
+                        </div>
+                        <div class="mb-3">
+                            {{ form.password2.label(class="form-label") }}
+                            {{ form.password2(class="form-control") }}
+                            {% for error in form.password2.errors %}
+                                <div class="invalid-feedback d-block">{{ error }}</div>
+                            {% endfor %}
+                        </div>
+                        {{ form.submit(class="btn btn-primary w-100") }}
+                    </form>
+                    <p class="text-center mt-3">
+                        Already have an account? <a href="{{ url_for('auth.login') }}">Login Here</a>
+                    </p>
+                </div>
+            </div>
+        </div>
+        <div class="col-12 col-md-6 col-lg-7 d-none d-md-flex justify-content-center align-items-center">
+            <img src="{{ url_for('static', filename='img/GenHR_LOGO.PNG') }}" alt="GenHR Logo" class="img-fluid" style="max-width: 80%;">
+        </div>
+    </div>
+</div>
+{% endblock %}

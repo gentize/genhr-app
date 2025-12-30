@@ -1,0 +1,126 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+        <div>
+            <h3 class="fw-bold text-dark mb-0">Debit Transactions</h3>
+            <p class="text-muted small">Manage outgoing funds and expenses.</p>
+        </div>
+        <div class="d-flex gap-2 align-items-center">
+             <form action="{{ url_for('admin.export_debits_pdf') }}" method="GET" class="d-flex gap-2 align-items-center">
+                <input type="month" name="month" class="form-control form-control-sm rounded-pill" required style="width: 150px;">
+                <button type="submit" class="btn btn-sm btn-outline-danger rounded-pill px-3 fw-semibold shadow-sm">
+                    <i class="bi bi-file-earmark-pdf me-1"></i>Export
+                </button>
+            </form>
+            <a href="{{ url_for('admin.add_debit') }}" class="btn btn-sm btn-danger rounded-pill px-4 fw-semibold shadow-sm">
+                <i class="bi bi-plus-lg me-2"></i>Add Debit
+            </a>
+        </div>
+    </div>
+
+    <!-- Search/Filter Form -->
+    <form method="GET" action="{{ url_for('admin.manage_debits') }}" class="row g-2 mb-4">
+        <div class="col-md-3">
+            <input type="text" name="paid_by" class="form-control form-control-sm rounded-pill border shadow-sm" placeholder="Search by Paid By..." value="{{ request.args.get('paid_by', '') }}">
+        </div>
+        <div class="col-md-3">
+            <input type="number" step="0.01" name="amount" class="form-control form-control-sm rounded-pill border shadow-sm" placeholder="Search by Amount..." value="{{ request.args.get('amount', '') }}">
+        </div>
+        <div class="col-md-3">
+            <select name="category" class="form-select form-select-sm rounded-pill border shadow-sm">
+                <option value="">All Categories</option>
+                <option value="Salary" {% if request.args.get('category') == 'Salary' %}selected{% endif %}>Salary</option>
+                <option value="Rent" {% if request.args.get('category') == 'Rent' %}selected{% endif %}>Rent</option>
+                <option value="Utilities" {% if request.args.get('category') == 'Utilities' %}selected{% endif %}>Utilities</option>
+                <option value="Purchase" {% if request.args.get('category') == 'Purchase' %}selected{% endif %}>Purchase</option>
+                <option value="Other" {% if request.args.get('category') == 'Other' %}selected{% endif %}>Other</option>
+            </select>
+        </div>
+        <div class="col-md-3 d-flex gap-2">
+            <button type="submit" class="btn btn-sm btn-primary rounded-pill px-4 shadow-sm fw-semibold w-100">
+                <i class="bi bi-search me-1"></i>Search
+            </button>
+            <a href="{{ url_for('admin.manage_debits') }}" class="btn btn-sm btn-light rounded-pill px-3 shadow-sm border fw-semibold">
+                <i class="bi bi-x-lg"></i>
+            </a>
+        </div>
+    </form>
+
+    <!-- Debits List -->
+    <div class="card border-0 shadow-sm rounded-4 overflow-hidden" style="border: 1px solid #e2e8f0 !important;">
+        <div class="card-header bg-white py-3 border-0 rounded-top-4" style="border-left: 4px solid #dc3545 !important;">
+            <h6 class="m-0 fw-semibold text-dark"><i class="bi bi-arrow-up-circle me-2 text-danger"></i>Transaction Log</h6>
+        </div>
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead class="bg-light text-muted extra-small text-uppercase">
+                        <tr>
+                            <th class="ps-4 py-3">S.No</th>
+                            <th>Date</th>
+                            <th>Category</th>
+                            <th>Paid By</th>
+                            <th>Description</th>
+                            <th>Reference</th>
+                            <th>Payment Mode</th>
+                            <th class="text-end pe-4">Amount</th>
+                            <th class="text-end pe-4">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for debit in debits %}
+                        <tr>
+                            <td class="ps-4 text-secondary small">{{ loop.index }}</td>
+                            <td class="text-nowrap">
+                                <span class="fw-bold text-dark small">{{ debit.date.strftime('%d %b %Y') }}</span>
+                            </td>
+                            <td><span class="badge bg-light text-secondary border fw-normal">{{ debit.category }}</span></td>
+                            <td><span class="text-dark small">{{ debit.paid_by or '-' }}</span></td>
+                            <td>
+                                <div class="text-muted small text-truncate" style="max-width: 200px;">{{ debit.description }}</div>
+                            </td>
+                             <td>
+                                <span class="font-monospace extra-small text-muted">{{ debit.reference_number or '-' }}</span>
+                            </td>
+                            <td>
+                                <span class="text-muted extra-small">{{ debit.payment_mode }}</span>
+                            </td>
+                            <td class="text-end pe-4">
+                                <span class="text-danger fw-bold">₹{{ "%.2f"|format(debit.amount) }}</span>
+                            </td>
+                            <td class="text-end pe-4">
+                                <div class="d-flex gap-2 justify-content-end align-items-center">
+                                    {% if debit.bill_file %}
+                                    <a href="{{ url_for('static', filename='documents/' + debit.bill_file) }}" target="_blank" class="btn btn-sm btn-outline-secondary rounded-pill px-3 shadow-sm" title="View Bill">
+                                        <i class="bi bi-file-earmark-text"></i>
+                                    </a>
+                                    {% endif %}
+                                    <a href="{{ url_for('admin.edit_debit', debit_id=debit.id) }}" class="btn btn-sm btn-outline-primary rounded-pill px-3 shadow-sm" title="Edit">
+                                        <i class="bi bi-pencil"></i>
+                                    </a>
+                                    <form action="{{ url_for('admin.delete_debit', debit_id=debit.id) }}" method="POST" class="d-inline" onsubmit="return confirm('Are you sure you want to delete this transaction?');">
+                                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                        <button type="submit" class="btn btn-sm btn-outline-danger rounded-pill px-3 shadow-sm" title="Delete">
+                                            <i class="bi bi-trash"></i>
+                                        </button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                        {% else %}
+                        <tr><td colspan="6" class="text-center py-5 text-muted">No debit records found.</td></tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .extra-small { font-size: 0.7rem; }
+    .rounded-top-4 { border-top-left-radius: 12px !important; border-top-right-radius: 12px !important; }
+</style>
+{% endblock %}

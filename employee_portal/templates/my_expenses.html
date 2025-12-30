@@ -1,0 +1,76 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container-fluid py-4">
+    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+        <div>
+            <h3 class="fw-bold text-dark mb-0">My Expense Claims</h3>
+            <p class="text-muted small">Track your reimbursement requests and statuses.</p>
+        </div>
+        <a href="{{ url_for('main.apply_expense') }}" class="btn btn-sm btn-primary rounded-pill px-4 fw-semibold shadow-sm">
+            <i class="bi bi-plus-circle me-2"></i>New Claim
+        </a>
+    </div>
+    
+    <div class="card border-0 shadow-sm rounded-4 overflow-hidden" style="border: 1px solid #e2e8f0 !important;">
+        <div class="card-header bg-white py-3 border-0 rounded-top-4" style="border-left: 4px solid #e67e22 !important;">
+            <h6 class="m-0 fw-semibold text-dark"><i class="bi bi-wallet2 me-2 text-primary"></i>Reimbursement History</h6>
+        </div>
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead class="bg-light text-muted extra-small text-uppercase">
+                        <tr>
+                            <th class="ps-4">Date</th>
+                            <th>Description</th>
+                            <th>Amount</th>
+                            <th>Category</th>
+                            <th>Status</th>
+                            <th class="pe-4 text-end">Receipt</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for claim in claims %}
+                        <tr>
+                            <td class="ps-4 small fw-medium text-dark">{{ claim.date_occurred.strftime('%d %b %Y') }}</td>
+                            <td class="small">{{ claim.title }}</td>
+                            <td class="fw-bold small text-dark">₹{{ "{:,.2f}".format(claim.amount) }}</td>
+                            <td class="small text-muted text-uppercase extra-small">{{ claim.category }}</td>
+                            <td>
+                                <!-- Status Background Removed -->
+                                <span class="text-{% if claim.status == 'Approved' %}success{% elif claim.status == 'Rejected' %}danger{% elif claim.status == 'Paid' %}primary{% else %}warning{% endif %} fw-bold px-3 extra-small">
+                                    {{ claim.status }}
+                                </span>
+                                {% if claim.status == 'Rejected' and claim.rejection_reason %}
+                                    <i class="bi bi-info-circle ms-1 text-danger" data-bs-toggle="tooltip" title="{{ claim.rejection_reason }}"></i>
+                                {% endif %}
+                            </td>
+                            <td class="pe-4 text-end">
+                                {% if claim.receipt_file %}
+                                    <a href="{{ url_for('static', filename='documents/' + claim.receipt_file) }}" target="_blank" class="btn btn-sm btn-light text-primary rounded-circle shadow-sm" style="width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; float: right;">
+                                        <i class="bi bi-eye-fill"></i>
+                                    </a>
+                                {% else %}
+                                    <span class="text-muted extra-small">-</span>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% else %}
+                        <tr>
+                            <td colspan="6" class="text-center py-5 text-muted">
+                                <i class="bi bi-receipt-cutoff display-4 opacity-25 d-block mb-3"></i>
+                                No expense claims found.
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .extra-small { font-size: 0.7rem; }
+    .rounded-top-4 { border-top-left-radius: 12px !important; border-top-right-radius: 12px !important; }
+</style>
+{% endblock %}
