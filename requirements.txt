@@ -12,3 +12,4 @@ wtforms-sqlalchemy
 psycopg2-binary
 gunicorn
 Pillow
+pandas
