@@ -11,3 +11,4 @@ Flask-Bootstrap
 wtforms-sqlalchemy
 psycopg2-binary
 gunicorn
+Pillow
